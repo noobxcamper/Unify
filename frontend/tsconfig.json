@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "types": [
+      "./types/types.d.ts"
+    ],
+    "outDir": "dist",
+    "rootDir": "src",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "target": "ES5",
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -1,0 +1,46 @@
+.buttons-list {
+    display: inline-flex;
+    list-style: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 5px;
+}
+
+.buttons-list > li > a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    margin: 0;
+    text-decoration: none;
+    color: var(--mui-palette-text-primary);
+    /* border-right: 1px solid var(--border-color); */
+}
+
+.buttons-list > li > a > span {
+    margin-left: 4px;
+}
+
+.buttons-list > li:hover {
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: var(--surface);
+}
+
+.input-container {
+    display: flex;
+    margin-bottom: 20px;
+    flex-direction: column;
+}
+
+.input-container > input, textarea {
+    padding: 10px;
+    border: 0;
+    outline: 1px solid #bdbdbd;
+    border-radius: 5px;
+}
+
+.input-container > input:focus, textarea:focus {
+    outline: 1px solid black;
+}
