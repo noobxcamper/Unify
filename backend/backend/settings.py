@@ -62,8 +62,12 @@ SIMPLE_JWT = {
 
 # DEV CORS SETUP
 if DEBUG:
-    CORS_ORIGIN_ALLOW_ALL = True
-    CORS_ALLOWS_CREDENTIALS = True
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOW_CREDENTIALS = True
+else:
+    CORS_ALLOWED_ORIGINS = [
+        'http://99.244.215.155:3000',
+    ]
 
 # Application definition
 INSTALLED_APPS = [

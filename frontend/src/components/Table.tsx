@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridColumnVisibilityModel, GridToolbar } from '@mui/x-data-grid';
-import { Skeleton, Stack } from "@mui/material";
-import api from "../api";
+import { Paper, Skeleton, Stack } from "@mui/material";
+import api from "../utils/api";
 import Box from '@mui/material/Box';
 
 function SkeletonComponent() {
@@ -21,11 +21,8 @@ function DataTableComponent({ data, columns, eventHandler }) {
 
     return (
         <>
-            <Box sx={{}}>
+            <Paper elevation={2}>
                 <DataGrid
-                    sx={{
-                        overflowX: 'scroll'
-                    }}
                     rows={data}
                     columns={columns}
                     onRowClick={eventHandler}
@@ -47,7 +44,7 @@ function DataTableComponent({ data, columns, eventHandler }) {
                         },
                     }}
                 />
-            </Box>
+            </Paper>
         </>
     )
 }
