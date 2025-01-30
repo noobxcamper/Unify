@@ -35,6 +35,7 @@ class OrdersAPI(APIView):
             serializer.save()
             return Response(serializer.data)
         else:
+            print("Serializer Error: ", end="")
             print(serializer.errors)
     
     def patch(self, request, order_id):

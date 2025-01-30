@@ -1,20 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { DataGrid, GridColumnVisibilityModel, GridToolbar } from '@mui/x-data-grid';
-import { Paper, Skeleton, Stack } from "@mui/material";
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { Paper } from "@mui/material";
 import api from "../utils/api";
-import Box from '@mui/material/Box';
-
-function SkeletonComponent() {
-    return (
-        <>
-            <Stack spacing={1}>
-                <Skeleton variant="rounded" height={20} />
-                <Skeleton variant="rounded" height={60} />
-                <Skeleton variant="rounded" height={150} />
-            </Stack>
-        </>
-    )
-}
+import { LoadingSkeletonMulti } from "./LoadingSkeleon";
 
 function DataTableComponent({ data, columns, eventHandler }) {
     const paginationModel = { page: 0, pageSize: 15 };
@@ -69,7 +57,7 @@ function Table({ apiUrl, columns, eventHandler }) {
     return (
         <>
             <div >
-                {isLoading ? <SkeletonComponent /> : <DataTableComponent data={data} eventHandler={eventHandler} columns={columns} />}
+                {isLoading ? <LoadingSkeletonMulti /> : <DataTableComponent data={data} eventHandler={eventHandler} columns={columns} />}
             </div>
         </>
     )

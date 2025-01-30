@@ -1,22 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Typography } from '@mui/material';
-import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router';
+import { createBrowserRouter, RouterProvider } from 'react-router';
 import { MsalProvider, useMsal } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
 import { msalConfig } from './settings/authConfig';
 
 // Pages
 import App from './pages/App';
-import Login from './pages/LoginPage';
-import Order from './pages/OrderViewPage';
-import Incidents from './pages/IncidentsPage';
-import IncidentReport from './pages/IncidentReportPage'
-import IncidentPlan from './pages/IncidentPlanPage'
-import OrdersTable from './pages/OrdersPage';
-import Page404 from './pages/Http404Page'
-import { PageContent } from './layouts/DashboardLayout';
-import TodoList from './pages/TodoListPage';
+import LoginPage from './pages/LoginPage';
+import OrderViewPage from './pages/OrderViewPage';
+import IncidentsPage from './pages/IncidentsPage';
+import IncidentReportPage from './pages/IncidentReportPage'
+import IncidentPlanPage from './pages/IncidentPlanPage'
+import OrdersPage from './pages/OrdersPage';
+import Http404Page from './pages/Http404Page'
+import TodoListPage from './pages/TodoListPage';
+import TicketsPage from './pages/TicketsPage';
 
 // Place pages here for routing
 const router = createBrowserRouter([
@@ -26,60 +26,53 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/',
-                element: <PageContent pageTitle="Homepage"><Typography fontSize={32}>Welcome to Unify</Typography></PageContent>
+                element: <Typography fontSize={32}>Welcome to Unify</Typography>
             },
             {
-                path: '/helpdesk',
-                children: [
-                    {
-                        path: 'tickets',
-                        element: <PageContent pageTitle="Helpdesk"><Typography fontSize={32}>Tickets</Typography></PageContent>,
-                        children: [
-                            {
-                                path: 'loser',
-                                element: <PageContent pageTitle="Helpdesk"><Typography fontSize={32}>Loser</Typography></PageContent>
-                            }
-                        ]
-                    },
-                    {
-                        path: 'kb',
-                        element: <PageContent pageTitle="Helpdesk"><Typography fontSize={32}>Knowledgebase</Typography></PageContent>
-                    },
-                    {
-                        path: 'development',
-                        element: <PageContent pageTitle="Helpdesk"><TodoList /></PageContent>
-                    }
-                ]
+                path: 'tickets',
+                Component: TicketsPage
+            },
+            {
+                path: 'tickets/loser',
+                element: <Typography fontSize={32}>Loser</Typography>
+            },
+            {
+                path: '/kb',
+                element: <Typography fontSize={32}>Knowledgebase</Typography>
+            },
+            {
+                path: '/development',
+                Component: TodoListPage,
             },
             {
                 path: '/incidents/plan',
-                element: <PageContent pageTitle="Incident Response Plan"><IncidentPlan /></PageContent>
+                Component: IncidentPlanPage
             },
             {
                 path: '/incidents/reports',
-                Component: Incidents
+                Component: IncidentsPage
             },
             {
                 path: '/incidents/new',
-                Component: IncidentReport
+                Component: IncidentReportPage
             },
             {
                 path: '/finance/orders',
-                element: <PageContent pageTitle="Orders"><OrdersTable /></PageContent>
+                Component: OrdersPage
             },
             {
                 path: '/finance/orders/:orderId',
-                Component: Order
+                Component: OrderViewPage
             }
         ]
     },
     {
         path: '/login',
-        Component: Login
+        Component: LoginPage
     },
     {
         path: '*',
-        Component: Page404
+        Component: Http404Page
     }
 ]);
 

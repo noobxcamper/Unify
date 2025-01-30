@@ -1,6 +1,9 @@
-import React, {  } from 'react';
+import React, { } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
-import Dashboard from '../layouts/DashboardLayout';
+import Dashboard, { PageContent } from '../layouts/DashboardLayout';
+import { Outlet } from 'react-router';
+import { MantineProvider } from '@mantine/core';
+import '@mantine/core/styles.css';
 
 // Theme override
 const theme = createTheme({
@@ -12,7 +15,6 @@ const theme = createTheme({
         fontFamily: "Ubuntu"
     },
     palette: {
-        mode: "dark",   // this needs to change dynamically later using states
         primary: {
             main: "#373aff",
         },
@@ -24,7 +26,13 @@ function App() {
         <>
             {/* <AuthenticatedTemplate> */}
             <ThemeProvider theme={theme} defaultMode='light'>
-                <Dashboard />
+                <MantineProvider>
+                    <Dashboard>
+                        <PageContent>
+                            <Outlet />
+                        </PageContent>
+                    </Dashboard>
+                </MantineProvider>
             </ThemeProvider>
             {/* </AuthenticatedTemplate> */}
 
