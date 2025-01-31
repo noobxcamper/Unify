@@ -1,21 +1,24 @@
-import axios, { InternalAxiosRequestConfig } from "axios";
+import axios from "axios";
 
-export const ACCESS_TOKEN = "access"
-export const REFRESH_TOKEN = "refresh"
-export const AUTHORIZED = "authorized"
-
-const api = axios.create({
+export const api = axios.create({
     baseURL: "http://localhost:36594/api"
 });
 
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
+export const msApi = axios.create({
+    baseURL: "https://graph.microsoft.com/v1/"
+});
 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+function msiApiGet(uri: string, token: any) {
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
 
-    return config;
-}, (error) => { return Promise.reject(error); });
+    axios.get(`https://graph.microsoft.com/v1.0/${uri}`, config).then((response) => {
+        console.log(response);
+        return response;
+    });
+}
 
-export default api;
+export {
+    msiApiGet
+}

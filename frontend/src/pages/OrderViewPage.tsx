@@ -3,13 +3,13 @@ import { useParams } from "react-router";
 import { Button, Input, Modal, Tooltip } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { IconBrandTeams, IconCheck, IconDeviceFloppy, IconExternalLink, IconMail, IconProgress, IconTruck, IconX } from "@tabler/icons-react";
-import { formatPrice } from "../utils/Utils";
+import { Typography } from "@mui/material";
 import { LoadingSkeletonSingle, LoadingSkeletonMulti } from "../components/LoadingSkeleon";
 import { TableItemText, TableItemPill } from "../components/TableItems";
-import api from "../utils/api";
+import { formatPrice } from "../utils/Utils";
+import { api } from "../utils/api";
 import Stack from "../components/Stack";
 import TextEditor from "../components/RichTextEditor";
-import { Typography } from "@mui/material";
 
 interface IOrder {
     id: number,

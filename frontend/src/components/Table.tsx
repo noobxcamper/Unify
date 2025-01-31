@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { Paper } from "@mantine/core";
-import api from "../utils/api";
+import { api } from "../utils/api";
 import { LoadingSkeletonMulti } from "./LoadingSkeleon";
 
 function Test() {

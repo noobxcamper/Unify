@@ -12,9 +12,22 @@ function Login() {
     // Navigation constant
     const navigate = useNavigate();
 
+    // Required scopes
+    const scopes = {
+        scopes: ["User.Read"],
+    };
+
+    // Get token silently
+    const getTokenSilently = () => {
+        instance.acquireTokenSilent(scopes).then((response) => {
+            localStorage.setItem("token", response.accessToken);
+        });
+    };
+
     // Get first active account on page load and redirect to homepage
     if (!instance.getActiveAccount() && instance.getAllAccounts().length > 0) {
         instance.setActiveAccount(instance.getAllAccounts()[0]);
+
         window.location.href = '/';
     }
 
@@ -27,6 +40,9 @@ function Login() {
         if (event.eventType === EventType.LOGIN_SUCCESS && payload.account) {
             // Set the active account to the payload account
             instance.setActiveAccount(payload.account);
+
+            // Get the access token with the given scope and set it in the application storage
+            getTokenSilently();
 
             // Redirect to homepage
             navigate('/');
@@ -59,7 +75,7 @@ function Login() {
                     <Typography fontSize={38}>Unify</Typography>
                     <Typography fontSize={14} mb={4}>BETA</Typography>
                     <Button variant="contained" onClick={microsoftSignInHandler}>Sign in with Microsoft</Button>
-                    <Typography fontSize={14} mt={2} fontStyle={"italic"}>Please contact your IT administrator to report any issues</Typography>
+                    <Typography fontSize={14} mt={2} color="gray">Please contact your IT administrator to report any issues</Typography>
                 </Paper>
             </Box>
         </>
