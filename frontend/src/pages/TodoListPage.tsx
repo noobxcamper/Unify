@@ -2,6 +2,8 @@ import React, { useState } from "react"
 import { Button, List, Paper, ThemeIcon } from '@mantine/core';
 import { IconCircleCheck, IconCircleDashed } from '@tabler/icons-react';
 import { Box, Typography } from "@mui/material";
+import '../assets/css/todolist.css';
+
 const rickRoll = require("../assets/audio/Rick-Roll.mp3")
 const rickRollVideo = require("../assets/audio/Rick-Roll-Video.mp4")
 
@@ -62,7 +64,10 @@ function AudioTroll() {
         <>
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start" }}>
                 <Button variant="filled" onClick={handlePlay} mb={8}>Do not click me (please)</Button>
-                {playState ? <video src={rickRollVideo} autoPlay loop width={270} height={320} /> : <></>}
+                
+                <div className={`RickRollContainer ${playState ? 'active' : ''}`}>
+                    <video src={rickRollVideo} autoPlay loop width={270} height={320} />
+                </div>
             </Box>
         </>
     )

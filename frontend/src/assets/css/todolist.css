@@ -1,0 +1,15 @@
+.RickRollContainer {
+    display: flex;
+    height: 0px;
+    width: 200px;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px
+}
+
+.RickRollContainer.active {
+    height: 300px;
+    transition-delay: 1s;
+    transition: all 5s;
+}

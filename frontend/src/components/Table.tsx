@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Paper } from "@mui/material";
+import { DataGrid, GridToolbar, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import { Paper } from "@mantine/core";
 import api from "../utils/api";
 import { LoadingSkeletonMulti } from "./LoadingSkeleon";
+
+function Test() {
+    return (
+        <>
+            <GridToolbarQuickFilter
+                variant="outlined"
+                sx={{ width: 300 }}
+                placeholder="Search..."
+            />
+        </>
+    )
+}
 
 function DataTableComponent({ data, columns, eventHandler }) {
     const paginationModel = { page: 0, pageSize: 15 };
 
     return (
         <>
-            <Paper elevation={2}>
+            <Paper shadow="md">
                 <DataGrid
                     rows={data}
                     columns={columns}
@@ -25,7 +37,7 @@ function DataTableComponent({ data, columns, eventHandler }) {
                     }}
                     pageSizeOptions={[5, 10, 15, 20, 25, 30]}
                     checkboxSelection
-                    slots={{ toolbar: GridToolbar }}
+                    slots={{ toolbar: () => <Test /> }}
                     slotProps={{
                         toolbar: {
                             showQuickFilter: true,

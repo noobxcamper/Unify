@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Typography } from "@mui/material";
-import { Button } from "@mantine/core";
+import { Button, Tooltip } from "@mantine/core";
 import { IconBrandTeams, IconCheck, IconDeviceFloppy, IconExternalLink, IconMail, IconTruck } from "@tabler/icons-react";
 import api from "../utils/api";
 import Stack from "../components/Stack";
-import { getOrderStatusText } from "../constants/enums";
 import TextEditor from "../components/RichTextEditor";
+import { formatPrice } from "../utils/Utils";
+import { getOrderStatusText } from "../constants/enums";
 import { LoadingSkeletonSingle, LoadingSkeletonMulti } from "../components/LoadingSkeleon";
+import { TableItemPill, TableItemText } from "../components/TableItems";
+import OrderStatusPill from "../components/OrderStatusPill";
 
 interface IOrder {
     submission_id: string,
@@ -24,26 +26,8 @@ interface IOrder {
     ship_to: string,
     shipping_address: string,
     hyperlink: string,
-    trackingUrl: string,
+    tracking_url: string,
     private_notes: string
-}
-
-function OrderItemText({ label = "Label", text }) {
-    return (
-        <div style={{ display: "flex", flexDirection: "column" }}>
-            <Typography fontSize={14} color="gray">{label}</Typography>
-            <Typography>{text}</Typography>
-        </div>
-    )
-}
-
-function OrderItemPill({ label = "Label", text, color = "#e9e9e9" }) {
-    return (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "start" }}>
-            <Typography fontSize={14} color="gray">{label}</Typography>
-            <Typography fontSize={12} style={{ backgroundColor: color, padding: "2px 12px", borderRadius: "5px" }}>{text}</Typography>
-        </div>
-    )
 }
 
 export default function Order() {
@@ -63,7 +47,7 @@ export default function Order() {
                 console.error(error);
             });
 
-        console.log(data?.email);
+        console.log(formatPrice(59000));
     }, []);
 
     return (
@@ -71,20 +55,26 @@ export default function Order() {
             {/* Top row */}
             {isLoading ? <LoadingSkeletonSingle /> :
                 <Stack orientation="row" margin="0px 0px 30px 0px">
-                    <Button
-                        variant="outline"
-                        leftSection={<IconBrandTeams />}
-                        component="a"
-                        href={`sip:${data?.email}`}>
-                        Send Message
-                    </Button>
-                    <Button
-                        variant="outline"
-                        leftSection={<IconMail />}
-                        component="a"
-                        href={`mailto:${data?.email}`}>
-                        Send Email
-                    </Button>
+                    <Tooltip position="bottom" label={`Send ${data?.responder} a message on Teams`}>
+                        <Button
+                            variant="outline"
+                            leftSection={<IconBrandTeams />}
+                            component="a"
+                            href={`sip:${data?.email}`}>
+                            Send Message
+                        </Button>
+                    </Tooltip>
+
+                    <Tooltip position="bottom" label={`Send ${data?.responder} an email`}>
+                        <Button
+                            variant="outline"
+                            leftSection={<IconMail />}
+                            component="a"
+                            href={`mailto:${data?.email}`}>
+                            Send Email
+                        </Button>
+                    </Tooltip>
+
                     <Button
                         variant="outline"
                         leftSection={<IconExternalLink />}
@@ -93,14 +83,18 @@ export default function Order() {
                         target="_blank">
                         Product Page
                     </Button>
-                    <Button
-                        variant="outline"
-                        leftSection={<IconTruck />}
-                        component="a"
-                        href={data?.trackingUrl}
-                        target="_blank">
-                        Tracking
-                    </Button>
+
+                    <Tooltip position="bottom" label={data?.tracking_url ? `Visit page` : "No tracking url"}>
+                        <Button
+                            variant="outline"
+                            leftSection={<IconTruck />}
+                            component="a"
+                            href={data?.tracking_url}
+                            target="_blank">
+                            Tracking
+                        </Button>
+                    </Tooltip>
+
                     <Button
                         variant="outline"
                         leftSection={<IconCheck />}>
@@ -112,16 +106,22 @@ export default function Order() {
             {isLoading ? <LoadingSkeletonMulti /> :
                 <Stack orientation="row" spacing="80px">
                     <Stack orientation="column">
-                        <OrderItemText label="Date" text={data?.submission_date} />
-                        <OrderItemText label="Department" text={data?.department} />
-                        <OrderItemText label="Name" text={data?.responder} />
-                        <OrderItemText label="Email" text={data?.email} />
+                        <TableItemText label="Date" text={data?.submission_date} />
+                        <TableItemText label="Department" text={data?.department} />
+                        <TableItemText label="Name" text={data?.responder} />
+                        <TableItemText label="Email" text={data?.email} />
                     </Stack>
                     <Stack orientation="column">
-                        <OrderItemPill label="Order Status" text={getOrderStatusText(data?.status ?? 4)} color={data?.status === 0 ? "#e9e9e9" : data?.status === 1 ? "#c4ffba" : data?.status === 2 ? "#bacaff" : data?.status === 3 ? "#fc7979" : "#e9e9e9"} />
-                        <OrderItemText label="Items" text={data?.items} />
-                        <OrderItemText label="Quantity" text={data?.quantity} />
-                        <OrderItemText label="Price Per Item" text={"$" + data?.price} />
+                        <OrderStatusPill label="Order Status" status={data?.status} />
+                        <TableItemText label="Items" text={data?.items} />
+                        <TableItemText label="Quantity" text={data?.quantity} />
+                        <TableItemText label="Price Per Item" text={formatPrice(data?.price ?? 0)} />
+                    </Stack>
+                    <Stack orientation="column">
+                        <TableItemText label="Ship To" text={data?.ship_to} />
+                        <TableItemText label="Address" text={data?.shipping_address ? data.shipping_address : "None"} />
+                        <TableItemText label="Notes" text={data?.notes ? data.notes : "None"} />
+                        <TableItemText label="Variation" text={data?.variation ? data.variation : "None"} />
                     </Stack>
                 </Stack>
             }

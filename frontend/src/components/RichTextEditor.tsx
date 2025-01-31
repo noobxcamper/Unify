@@ -11,11 +11,6 @@ import '@mantine/tiptap/styles.css';
 import { useEffect } from 'react';
 
 function TextEditor({content = ""}) {
-    let myContent = content;
-
-    useEffect(() => {
-        console.log(myContent);
-    }, []);
 
     const editor = useEditor({
         extensions: [
@@ -28,7 +23,7 @@ function TextEditor({content = ""}) {
             Placeholder.configure({placeholder: "Private notes, only visible to you and your team"}),
             TextAlign.configure({ types: ['heading', 'paragraph']}),
         ],
-        content: myContent
+        content: content
     });
 
     return (
