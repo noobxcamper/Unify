@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Box, Container, Grid2, Typography, Divider } from "@mui/material";
 import { ActionIcon } from "@mantine/core";
 import { Navigation, ListSection, ListItemLink } from "../components/Navigation";
+import AccountMenuButton from "../components/AccountMenuButton";
 import Breadcrumbs from "../components/Breadcrumbs";
 import BrandLogo from "../assets/img/brand.png"
 import {
     IconLayoutDashboard,
-    IconUserCircle,
     IconClipboardText,
     IconListCheck,
     IconShieldCog,
@@ -44,8 +44,9 @@ function Branding({ title = "App", icon }) {
 function PageHeader({ onMenuClick }) {
     return (
         <>
-            <Box sx={{ height: 58, px: 2, display: "inline-flex", width: "100%", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #e9e9e9" }}>
+            <Box sx={{ height: 58, px: 2, display: "inline-flex", width: "100%", alignItems: "center", borderBottom: "1px solid #e9e9e9" }}>
                 <ActionIcon
+                    hiddenFrom="xl"
                     variant="subtle"
                     onClick={onMenuClick}
                     style={{
@@ -54,7 +55,7 @@ function PageHeader({ onMenuClick }) {
                     <IconMenu2 size={22} />
                 </ActionIcon>
 
-                <Box>
+                <Box sx={{ display: "flex", width: "100%", justifyContent: "end" }}>
                     <ActionIcon
                         variant="subtle"
                         style={{
@@ -63,13 +64,7 @@ function PageHeader({ onMenuClick }) {
                         <IconBell size={22} />
                     </ActionIcon>
 
-                    <ActionIcon
-                        variant="subtle"
-                        style={{
-                            color: "black",
-                        }}>
-                        <IconUserCircle size={22} />
-                    </ActionIcon>
+                    <AccountMenuButton />
                 </Box>
             </Box>
         </>

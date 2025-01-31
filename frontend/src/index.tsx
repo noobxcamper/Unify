@@ -17,6 +17,7 @@ import OrdersPage from './pages/OrdersPage';
 import Http404Page from './pages/Http404Page'
 import TodoListPage from './pages/TodoListPage';
 import TicketsPage from './pages/TicketsPage';
+import AccountPage from './pages/AccountPage';
 
 // Place pages here for routing
 const router = createBrowserRouter([
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
             {
                 path: '/',
                 element: <Typography fontSize={32}>Welcome to Unify</Typography>
+            },
+            {
+                path: '/account',
+                Component: AccountPage
             },
             {
                 path: 'tickets',
@@ -80,12 +85,12 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 // Microsoft Auth Settings
-// const msalInstance = new PublicClientApplication(msalConfig);
+const msalInstance = new PublicClientApplication(msalConfig);
 
 root.render(
     <>
-        {/* <MsalProvider instance={msalInstance}> */}
+        <MsalProvider instance={msalInstance}>
             <RouterProvider router={router} />
-        {/* </MsalProvider> */}
+        </MsalProvider>
     </>
 );
