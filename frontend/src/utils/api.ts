@@ -5,7 +5,7 @@ export const REFRESH_TOKEN = "refresh"
 export const AUTHORIZED = "authorized"
 
 const api = axios.create({
-    baseURL: "http://192.168.50.200:36594/api"
+    baseURL: "http://localhost:36594/api"
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {

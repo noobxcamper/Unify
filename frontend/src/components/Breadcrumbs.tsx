@@ -4,6 +4,7 @@ import { firstCharacterUppercase } from "../utils/Utils";
 import { Box, Link } from "@mui/material";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { Button } from "@mantine/core";
+import { v4 as uuidv4 } from 'uuid';
 
 function Breadcrumbs() {
     const location = useLocation();
@@ -20,7 +21,7 @@ function Breadcrumbs() {
             return (
                 <>
                     <Box sx={{ ":before": { m: "0px 10px", content: '"/"' } }}>
-                        <Link sx={{ color: "black" }} href={currentLink} key={crumb}>{crumb}</Link>
+                        <Link sx={{ color: "black" }} href={currentLink} key={uuidv4()}>{crumb}</Link>
                     </Box>
                 </>
             )

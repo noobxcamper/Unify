@@ -46,8 +46,6 @@ export default function Order() {
             .catch((error) => {
                 console.error(error);
             });
-
-        console.log(formatPrice(59000));
     }, []);
 
     return (

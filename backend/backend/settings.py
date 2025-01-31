@@ -24,6 +24,8 @@ load_dotenv(find_dotenv())
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
+SECRET_KEY = environ['SECRET_KEY']
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -32,18 +34,17 @@ ALLOWED_HOSTS = [
 ]
 
 # AUTH KEYS
-APP_ID = environ['APP_ID']
-TENANT_ID = environ['TENANT_ID']
-SECRET_KEY = environ['SECRET_KEY']
-SCOPES = [
-    "User.Read",
-    "ChannelMessage.Send",
-    "ChatMessage.Send"
-]
+#APP_ID = environ['APP_ID']
+#TENANT_ID = environ['TENANT_ID']
+#SCOPES = [
+#    "User.Read",
+#    "ChannelMessage.Send",
+#    "ChatMessage.Send"
+#]
 
 # Microsoft Teams Config
-TEAM_ID =  environ['TEAM_ID']
-CHANNEL_ID =  environ['CHANNEL_ID']
+#TEAM_ID =  environ['TEAM_ID']
+#CHANNEL_ID =  environ['CHANNEL_ID']
 
 # JWT and Auth setup
 REST_FRAMEWORK = {
