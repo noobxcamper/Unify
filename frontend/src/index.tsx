@@ -2,12 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Typography } from '@mui/material';
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import { MsalProvider, useMsal } from '@azure/msal-react';
+import { MsalProvider } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
 import { msalConfig } from './settings/authConfig';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Pages
-import App from './pages/App';
+import AdminApp from './apps/AdminApp';
+import UserApp from './apps/UserApp';
+import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import OrderViewPage from './pages/OrderViewPage';
 import IncidentsPage from './pages/IncidentsPage';
@@ -18,19 +21,33 @@ import Http404Page from './pages/Http404Page'
 import TodoListPage from './pages/TodoListPage';
 import TicketsPage from './pages/TicketsPage';
 import AccountPage from './pages/AccountPage';
+import { Button, colorsTuple, createTheme, MantineProvider, virtualColor } from '@mantine/core';
+import { msalInstance } from './utils/MsalAuthHandler';
 
 // Place pages here for routing
 const router = createBrowserRouter([
     {
-        path: '/',
-        Component: App,
+        path: '/login',
+        Component: LoginPage
+    },
+    {
+        path: '/login?redirect=:path',
+        Component: LoginPage
+    },
+    {
+        path: '*',
+        Component: Http404Page
+    },
+    {
+        path: '/admin',
+        element: <ProtectedRoute requiredRoles={["Admin"]}><AdminApp /></ProtectedRoute>,
         children: [
             {
-                path: '/',
-                element: <Typography fontSize={32}>Welcome to Unify</Typography>
+                path: 'dashboard',
+                Component: DashboardPage
             },
             {
-                path: '/account',
+                path: 'account',
                 Component: AccountPage
             },
             {
@@ -42,55 +59,58 @@ const router = createBrowserRouter([
                 element: <Typography fontSize={32}>Loser</Typography>
             },
             {
-                path: '/kb',
+                path: 'kb',
                 element: <Typography fontSize={32}>Knowledgebase</Typography>
             },
             {
-                path: '/development',
+                path: 'development',
                 Component: TodoListPage,
             },
             {
-                path: '/incidents/plan',
+                path: 'incidents/plan',
                 Component: IncidentPlanPage
             },
             {
-                path: '/incidents/reports',
+                path: 'incidents/reports',
                 Component: IncidentsPage
             },
             {
-                path: '/incidents/new',
+                path: 'incidents/new',
                 Component: IncidentReportPage
             },
             {
-                path: '/finance/orders',
+                path: 'finance/orders',
                 Component: OrdersPage
             },
             {
-                path: '/finance/orders/:orderId',
+                path: 'finance/orders/:orderId',
                 Component: OrderViewPage
             }
         ]
     },
     {
-        path: '/login',
-        Component: LoginPage
-    },
-    {
-        path: '*',
-        Component: Http404Page
+        path: '/',
+        element: <ProtectedRoute requiredRoles={["Admin, User"]}><UserApp /></ProtectedRoute>
     }
 ]);
+
+// Override default theme
+const theme = createTheme({
+    colors: {
+        'primary-solid': colorsTuple('#d14025'),
+        'primary-hover': colorsTuple('#ff6a2d')
+    }
+});
 
 // App Root
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
-// Microsoft Auth Settings
-const msalInstance = new PublicClientApplication(msalConfig);
-
 root.render(
     <>
-        <MsalProvider instance={msalInstance}>
-            <RouterProvider router={router} />
-        </MsalProvider>
+        <MantineProvider theme={theme}>
+            <MsalProvider instance={msalInstance}>
+                <RouterProvider router={router} />
+            </MsalProvider>
+        </MantineProvider>
     </>
 );

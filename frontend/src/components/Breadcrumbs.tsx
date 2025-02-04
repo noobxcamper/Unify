@@ -20,7 +20,7 @@ function Breadcrumbs() {
 
             return (
                 <>
-                    <Box sx={{ ":before": { m: "0px 10px", content: '"/"' } }}>
+                    <Box sx={{ ":after": { m: "0px 10px", content: '"→"' }, ':last-child:after': { content: '""' } }}>
                         <Link sx={{ color: "black" }} href={currentLink} key={uuidv4()}>{crumb}</Link>
                     </Box>
                 </>
@@ -29,7 +29,7 @@ function Breadcrumbs() {
 
     return (
         <Box sx={{ display: "inline-flex", alignItems: "center", my: 2 }}>
-            <Button
+            {/* <Button
                 style={{
                     height: "auto",
                     padding: 0,
@@ -38,7 +38,7 @@ function Breadcrumbs() {
                 variant="subtle"
                 onClick={(() => navigate(-1))}>
                 <IconArrowLeft />
-            </Button>
+            </Button> */}
             {crumbs}
         </Box>
     )

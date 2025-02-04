@@ -2,6 +2,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
+from core.authentication import AzureADAuthentication
+from core.permissions import RoleBasedPermission
 from core.models import Incident, Order
 from .serializers import IncidentSerializer, OrderSerializer
 
@@ -9,7 +11,7 @@ from .serializers import IncidentSerializer, OrderSerializer
 
 #region Orders API
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([RoleBasedPermission])
 def get_all_orders(request):
     orders = Order.objects.all()
     serializer = OrderSerializer(orders, many=True)
@@ -17,7 +19,7 @@ def get_all_orders(request):
     return Response(serializer.data)
 
 class OrdersAPI(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated, RoleBasedPermission]
 
     def get(self, request, order_id):
         order = Order.objects.get(id=order_id)

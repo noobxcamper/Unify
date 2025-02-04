@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Box, Container, Grid2, Typography, Divider } from "@mui/material";
-import { ActionIcon } from "@mantine/core";
+import { Box, Container, Grid2, Typography } from "@mui/material";
+import { ActionIcon, Divider } from "@mantine/core";
 import { Navigation, ListSection, ListItemLink } from "../components/Navigation";
 import AccountMenuButton from "../components/AccountMenuButton";
-import Breadcrumbs from "../components/Breadcrumbs";
 import BrandLogo from "../assets/img/brand.png"
 import {
     IconLayoutDashboard,
@@ -26,7 +25,8 @@ function Branding({ title = "App", icon }) {
             <Box sx={{
                 display: "inline-flex",
                 alignItems: "center",
-                px: 1
+                px: 1,
+                mb: 4
             }}>
                 <img className="DashboardItemIcon" src={icon} height={36} width={36} />
                 <Typography sx={{
@@ -75,7 +75,6 @@ function PageContent({ children }) {
     return (
         <>
             <Box>
-                <Breadcrumbs />
                 {children}
             </Box>
         </>
@@ -100,24 +99,24 @@ function Dashboard({ children }) {
                     <Navigation open={open} onClose={closeDrawer}>
                         <Branding title="Unify" icon={BrandLogo} />
                         <ListSection sectionTitle="Dashboard">
-                            <ListItemLink title="Dashboard" link="/" icon={<IconLayoutDashboard />} />
+                            <ListItemLink title="Dashboard" link="/admin/dashboard" icon={<IconLayoutDashboard />} />
                         </ListSection>
-                        <Divider />
+                        <Divider my={"sm"} />
                         <ListSection sectionTitle="Helpdesk">
-                            <ListItemLink title="Tickets" link="/tickets" icon={<IconTicket />} />
-                            <ListItemLink title="Knowledgebase" link="/kb" icon={<IconLibrary />} />
-                            <ListItemLink title="Development" link="/development" icon={<IconCode />} />
+                            <ListItemLink title="Tickets" link="/admin/tickets" icon={<IconTicket />} />
+                            <ListItemLink title="Knowledgebase" link="/admin/kb" icon={<IconLibrary />} />
+                            <ListItemLink title="Development" link="/admin/development" icon={<IconCode />} />
                         </ListSection>
-                        <Divider />
+                        <Divider my={"sm"} />
                         <ListSection sectionTitle="Incident Response">
                             <ListItemLink title="Reports" icon={<IconClipboardText />} />
-                            <ListItemLink title="Plan" link="/incidents/plan" icon={<IconListCheck />} />
+                            <ListItemLink title="Plan" link="/admin/incidents/plan" icon={<IconListCheck />} />
                         </ListSection>
-                        <Divider />
+                        <Divider my={"sm"} />
                         <ListSection sectionTitle="Finance">
-                            <ListItemLink title="Orders" link="/finance/orders" icon={<IconCreditCard />} />
+                            <ListItemLink title="Orders" link="/admin/finance/orders" icon={<IconCreditCard />} />
                         </ListSection>
-                        <Divider />
+                        <Divider my={"sm"} />
                         <ListSection sectionTitle="Management">
                             <ListItemLink title="Users" icon={<IconUsers />} />
                             <ListItemLink title="General" icon={<IconSettings />} />

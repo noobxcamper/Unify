@@ -57,8 +57,12 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "ALGORITHM": "RS256",
+    "SIGNING_KEY": None,  # MSAL tokens use asymmetric keys
+    "VERIFYING_KEY": "YOUR_AZURE_AD_PUBLIC_KEY",  # Fetch from Azure
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
 }
 
 # DEV CORS SETUP
@@ -82,6 +86,16 @@ INSTALLED_APPS = [
     'core',
     'api'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'core.authentication.AzureADAuthentication',  # Path to your custom auth class
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        'core.permissions.RoleBasedPermission'
+    ],
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

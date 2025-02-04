@@ -1,80 +1,31 @@
 import React from "react";
-import { useNavigate } from "react-router";
-import { useMsal } from "@azure/msal-react";
-import { AuthenticationResult, EventType } from "@azure/msal-browser";
-import { Box, Paper, Button, Typography } from "@mui/material";
-import { loginRequest } from "../settings/authConfig";
+import { Typography } from "@mui/material";
+import { Box, Paper, Button } from "@mantine/core";
+import { loginHandler } from "../utils/MsalAuthHandler";
+import { IconBrandWindowsFilled } from "@tabler/icons-react";
 
 function Login() {
-    // Get the MSAL instance
-    const { instance } = useMsal();
-
-    // Navigation constant
-    const navigate = useNavigate();
-
-    // Required scopes
-    const scopes = {
-        scopes: ["User.Read"],
-    };
-
-    // Get token silently
-    const getTokenSilently = () => {
-        instance.acquireTokenSilent(scopes).then((response) => {
-            localStorage.setItem("token", response.accessToken);
-        });
-    };
-
-    // Get first active account on page load and redirect to homepage
-    if (!instance.getActiveAccount() && instance.getAllAccounts().length > 0) {
-        instance.setActiveAccount(instance.getAllAccounts()[0]);
-
-        window.location.href = '/';
-    }
-
-    // Redirect to homepage on login success
-    instance.addEventCallback((event) => {
-        // Get the payload from the event
-        const payload = event.payload as AuthenticationResult
-
-        // If the event type is login success, and the payload has an account
-        if (event.eventType === EventType.LOGIN_SUCCESS && payload.account) {
-            // Set the active account to the payload account
-            instance.setActiveAccount(payload.account);
-
-            // Get the access token with the given scope and set it in the application storage
-            getTokenSilently();
-
-            // Redirect to homepage
-            navigate('/');
-        }
-    });
-
-    const microsoftSignInHandler = () => {
-        // If user signs in with microsoft
-        // Show sign in popup
-        instance.loginPopup(loginRequest).catch(error => {
-            console.error(error);
-        })
-    }
-
     return (
         <>
-            <Box sx={{
+            <Box style={{
                 height: "100vh",
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
             }}>
-                <Paper elevation={0} sx={{
+                <Paper shadow={"md"} mb="16px" style={{
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    padding: 3,
+                    padding: "24px",
+                    borderRadius: "16px",
+                    border: "1px solid #e9e9e9"
                 }}>
                     <Typography fontSize={38}>Unify</Typography>
                     <Typography fontSize={14} mb={4}>BETA</Typography>
-                    <Button variant="contained" onClick={microsoftSignInHandler}>Sign in with Microsoft</Button>
+                    <Button variant="contained" onClick={loginHandler} leftSection={<IconBrandWindowsFilled />}>Sign in with Microsoft</Button>
                     <Typography fontSize={14} mt={2} color="gray">Please contact your IT administrator to report any issues</Typography>
                 </Paper>
             </Box>

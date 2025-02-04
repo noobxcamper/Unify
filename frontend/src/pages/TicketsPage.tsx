@@ -10,7 +10,6 @@ function TicketsPage() {
             <Button
                 component="a"
                 href="/tickets/loser"
-                variant="light"
                 rightSection={<IconArrowRight size={14} />}
             >
                 Visit the Loser

@@ -1,18 +1,18 @@
 import React from "react";
 import { List, Typography, ListItem, Link } from "@mui/material";
-import { Box, Drawer, Tooltip } from "@mantine/core";
+import { Box, Button, Drawer, Text, Tooltip } from "@mantine/core";
 
 function Navigation({ open = false, onClose, children }) {
     return (
         <>
             <Box
                 visibleFrom="xl"
+                p={"sm"}
                 style={{
                     display: "flex",
                     flexDirection: "column",
                     overflow: "hidden",
                     height: "100%",
-                    padding: "16px",
                     borderRight: "1px solid #e9e9e9",
                 }}>
                 {children}
@@ -31,16 +31,19 @@ function Navigation({ open = false, onClose, children }) {
 function ListSection({ sectionTitle = "Section", children }) {
     return (
         <>
-            <List>
-                <Typography
-                fontSize={13}
-                color="gray"
-                px={1}
-                my={1}>
+            <Box 
+            style={{
+                display: "flex",
+                flexDirection: "column"
+            }}>
+                <Text
+                    size="sm"
+                    px={"sm"}
+                    mb={"sm"}>
                     {sectionTitle}
-                </Typography>
+                </Text>
                 {children}
-            </List>
+            </Box>
         </>
     )
 }
@@ -49,28 +52,38 @@ function ListItemLink({ title = "Link", link = "/", icon }) {
     return (
         <>
             <Tooltip label={title} position="right">
-                <ListItem sx={{ py: 0.5, px: 0 }}>
-                    <Link sx={{
-                        display: "inline-flex",
-                        height: "100%",
-                        color: "black",
-                        width: "100%",
-                        alignItems: "center",
-                        borderRadius: 2,
-                        textDecoration: "none",
-                        p: 1,
-                        ":hover":
-                        {
-                            bgcolor: "primary.main",
-                            color: "whitesmoke"
-                        }
-                    }} href={link}>
-                        {icon}
-                        <Typography
+                {/* <Link sx={{
+                    display: "inline-flex",
+                    height: "100%",
+                    color: "black",
+                    width: "100%",
+                    alignItems: "center",
+                    borderRadius: 2,
+                    textDecoration: "none",
+                    p: 1,
+                    ":hover":
+                    {
+                        bgcolor: "primary.main",
+                        color: "whitesmoke"
+                    }
+                }} href={link}>
+                    {icon}
+                    <Typography
                         fontSize={14}
                         ml={2}>{title}</Typography>
-                    </Link>
-                </ListItem>
+                </Link> */}
+                <Button
+                    className="LinkButton"
+                    style={{
+                        display: "flex",
+                        borderRadius: "8px",
+                    }}
+                    variant="subtle"
+                    component="a"
+                    href={link}
+                    leftSection={icon}>
+                    <Text>{title}</Text>
+                </Button>
             </Tooltip>
         </>
     )

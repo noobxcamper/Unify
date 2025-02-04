@@ -7,7 +7,7 @@ import { Typography } from "@mui/material";
 import { LoadingSkeletonSingle, LoadingSkeletonMulti } from "../components/LoadingSkeleon";
 import { TableItemText, TableItemPill } from "../components/TableItems";
 import { formatPrice } from "../utils/Utils";
-import { api } from "../utils/api";
+import { backendAPI } from "../utils/api";
 import Stack from "../components/Stack";
 import TextEditor from "../components/RichTextEditor";
 
@@ -35,7 +35,7 @@ function SubmitButtonWithModal({ orderId }) {
     const [opened, { open, close }] = useDisclosure(false);
 
     const submitOrderClick = () => {
-        api.patch(`/orders/${orderId}`, { "status": 1 });
+        backendAPI.patch(`/orders/${orderId}`, { "status": 1 });
         window.location.reload();
     };
 
@@ -71,7 +71,7 @@ function CancelButtonWithModal({ orderId }) {
     const [opened, { open, close }] = useDisclosure(false);
 
     const cancelOrderClick = () => {
-        api.patch(`/orders/${orderId}`, { "status": 3 });
+        backendAPI.patch(`/orders/${orderId}`, { "status": 3 });
         window.location.reload();
     };
 
@@ -113,7 +113,7 @@ export default function Order() {
     useEffect(() => {
         setIsLoading(true);
 
-        api.get(`/orders/${orderId}`)
+        backendAPI.get(`/orders/${orderId}`)
             .then(response => {
                 setData(response.data);
                 setIsLoading(false);

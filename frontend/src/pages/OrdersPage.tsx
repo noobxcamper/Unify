@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { formatPrice } from "../utils/Utils";
 import { getOrderStatusText } from "../constants/enums";
 import { TableItemPill } from "../components/TableItems";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 function OrdersTable() {
     const columns: GridColDef[] = [
@@ -26,6 +27,7 @@ function OrdersTable() {
 
     return (
         <>
+            <Breadcrumbs />
             <Table apiUrl="/orders/all" columns={columns} eventHandler={rowClick} />
         </>
     )
