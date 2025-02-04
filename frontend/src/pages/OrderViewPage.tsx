@@ -6,7 +6,7 @@ import { IconBrandTeams, IconCheck, IconDeviceFloppy, IconExternalLink, IconMail
 import { Typography } from "@mui/material";
 import { LoadingSkeletonSingle, LoadingSkeletonMulti } from "../components/LoadingSkeleon";
 import { TableItemText, TableItemPill } from "../components/TableItems";
-import { formatPrice } from "../utils/Utils";
+import { formatPrice } from "../utils/utils";
 import { backendAPI } from "../utils/api";
 import Stack from "../components/Stack";
 import TextEditor from "../components/RichTextEditor";

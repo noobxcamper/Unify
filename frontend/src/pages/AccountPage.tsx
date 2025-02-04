@@ -9,7 +9,7 @@ function AccountPage() {
     const account = useAccount();
     const [loading, setLoading] = useState<boolean>(false);
     const [users, setUsers] = useState<[]>();
-    const paginationModel = { page: 0, pageSize: 15 };
+    const paginationModel = { page: 0, pageSize: 30 };
 
     const columns: GridColDef[] = [
         { field: 'displayName', headerName: 'Name', flex: 1, headerClassName: "mui-table-header" },
@@ -34,7 +34,7 @@ function AccountPage() {
     return (
         <>
             <Text size="32px">{account?.name}</Text>
-            <Text my={"lg"} fs={"italic"}>If you see a list of users below, this means that the Graph API call was successful. If not, try signing out and back in.</Text>
+            <Text my={"lg"}>If you see a list of users below, this means that the Graph API call was successful. If not, try signing out and back in.</Text>
             <Paper shadow={"lg"} style={{
                 overflow: "auto",
                 maxHeight: "75vh",

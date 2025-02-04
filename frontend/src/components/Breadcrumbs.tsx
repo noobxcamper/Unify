@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
-import { firstCharacterUppercase } from "../utils/Utils";
+import { firstCharacterUppercase } from "../utils/utils";
 import { Box, Link } from "@mui/material";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { Button } from "@mantine/core";

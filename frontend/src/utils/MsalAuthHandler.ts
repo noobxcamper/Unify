@@ -43,9 +43,6 @@ msalInstance.initialize();
  * @returns true if expired and false if not
  */
 const didTokenExpire = (exp?: number) => {
-    console.log("Expiry: " + exp! * 1000);
-    console.log("Now: " + Date.now());
-
     if (Date.now() >= exp! * 1000) {
         return true;
     } else {

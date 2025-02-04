@@ -2,7 +2,7 @@ import React from "react";
 import Table from "../components/Table"
 import { GridColDef, GridEventListener } from "@mui/x-data-grid"
 import { useNavigate } from "react-router";
-import { formatPrice } from "../utils/Utils";
+import { formatPrice } from "../utils/utils";
 import { getOrderStatusText } from "../constants/enums";
 import { TableItemPill } from "../components/TableItems";
 import Breadcrumbs from "../components/Breadcrumbs";
