@@ -60,12 +60,6 @@ function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRo
             const hasRequiredRole = idTokenClaims.roles?.filter(role => requiredRoles.includes(role));
             console.log(hasRequiredRole);
 
-            for (var i = 0; i < requiredRoles.length; i++) {
-                if (idTokenClaims.roles?[i].toString() == requiredRoles[i]) {
-
-                }
-            }
-
             idTokenClaims.roles?.forEach((role) => {
                 if (requiredRoles.includes(role)) {
                     console.log(role);
