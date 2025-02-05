@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { Paper } from "@mantine/core";
 import { backendAPI } from "../utils/api";
-import { LoadingSkeletonMulti } from "./LoadingSkeleon";
+import { LoadingSkeletonMulti } from "./LoadingSkeleton";
+import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
 
 function Test() {
     return (
@@ -52,11 +53,12 @@ function DataTableComponent({ data, columns, eventHandler }) {
 function Table({ apiUrl, columns, eventHandler }) {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState<Boolean>(true);
+    const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
 
     useEffect(() => {
         setIsLoading(true);
 
-        backendAPI.get(apiUrl)
+        backendAPI(token).get(apiUrl)
             .then(response => {
                 setData(response.data);
                 setIsLoading(false);

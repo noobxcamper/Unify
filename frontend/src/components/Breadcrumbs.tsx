@@ -10,6 +10,7 @@ function Breadcrumbs() {
     const location = useLocation();
     const navigate = useNavigate();
     let currentLink = '';
+    let uniqueId: any;
 
     const crumbs = location.pathname
         .split('/')
@@ -17,13 +18,12 @@ function Breadcrumbs() {
         .map(crumb => {
             currentLink += `/${crumb}`
             crumb = firstCharacterUppercase(crumb);
+            uniqueId = uuidv4();
 
             return (
-                <>
-                    <Box sx={{ ":after": { m: "0px 10px", content: '"→"' }, ':last-child:after': { content: '""' } }}>
-                        <Link sx={{ color: "black" }} href={currentLink} key={uuidv4()}>{crumb}</Link>
-                    </Box>
-                </>
+                <Box key={uniqueId} sx={{ ":after": { m: "0px 10px", content: '"→"' }, ':last-child:after': { content: '""' } }}>
+                    <Link sx={{ color: "black" }} href={currentLink}>{crumb}</Link>
+                </Box>
             )
         });
 

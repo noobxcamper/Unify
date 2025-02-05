@@ -1,11 +1,11 @@
 import { Skeleton, Stack } from "@mui/material";
 import React from "react"
 
-function LoadingSkeletonSingle() {
+function LoadingSkeletonSingle({ height = 30 }) {
     return (
         <>
-            <Stack spacing={1}>
-                <Skeleton variant="rounded" height={30} />
+            <Stack mb={1}>
+                <Skeleton variant="rounded" height={height} />
             </Stack>
         </>
     )

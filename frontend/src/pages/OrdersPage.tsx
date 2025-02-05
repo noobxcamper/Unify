@@ -22,7 +22,7 @@ function OrdersTable() {
     const navigate = useNavigate();
 
     const rowClick: GridEventListener<'rowClick'> = (params) => {
-        navigate(`/finance/orders/${params.row.id}`);
+        navigate(`${params.row.id}`);
     }
 
     return (

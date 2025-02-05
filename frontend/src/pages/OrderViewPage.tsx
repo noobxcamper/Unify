@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Button, Input, Modal, Tooltip } from "@mantine/core";
+import { Button, Input, Modal, Text, Tooltip } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { IconBrandTeams, IconCheck, IconDeviceFloppy, IconExternalLink, IconMail, IconProgress, IconTruck, IconX } from "@tabler/icons-react";
-import { Typography } from "@mui/material";
-import { LoadingSkeletonSingle, LoadingSkeletonMulti } from "../components/LoadingSkeleon";
+import { LoadingSkeletonSingle, LoadingSkeletonMulti } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
 import { formatPrice } from "../utils/utils";
 import { backendAPI } from "../utils/api";
 import Stack from "../components/Stack";
 import TextEditor from "../components/RichTextEditor";
+import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 interface IOrder {
     id: number,
@@ -33,9 +34,10 @@ interface IOrder {
 
 function SubmitButtonWithModal({ orderId }) {
     const [opened, { open, close }] = useDisclosure(false);
+    const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
 
     const submitOrderClick = () => {
-        backendAPI.patch(`/orders/${orderId}`, { "status": 1 });
+        backendAPI(token).patch(`/orders/${orderId}`, { "status": 1 });
         window.location.reload();
     };
 
@@ -54,7 +56,7 @@ function SubmitButtonWithModal({ orderId }) {
                 <Input.Wrapper label="Tracking URL" description="If no tracking url is provided, leave blank" mb={"8px"}>
                     <Input />
                 </Input.Wrapper>
-                <Typography fontSize={12} mb={"8px"}>Submitting an order cannot be reversed. Please complete all necessary steps before submitting.</Typography>
+                <Text size={"12px"} mb={"8px"}>Submitting an order cannot be reversed. Please complete all necessary steps before submitting.</Text>
                 <Button
                     onClick={submitOrderClick}
                     variant="outline"
@@ -69,9 +71,10 @@ function SubmitButtonWithModal({ orderId }) {
 
 function CancelButtonWithModal({ orderId }) {
     const [opened, { open, close }] = useDisclosure(false);
+    const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
 
     const cancelOrderClick = () => {
-        backendAPI.patch(`/orders/${orderId}`, { "status": 3 });
+        backendAPI(token).patch(`/orders/${orderId}`, { "status": 3 });
         window.location.reload();
     };
 
@@ -88,8 +91,8 @@ function CancelButtonWithModal({ orderId }) {
             </Tooltip>
 
             <Modal opened={opened} onClose={close} title="Cancel Order">
-                <Typography mb={"8px"} fontSize={14}>Are you sure you want to cancel this order?</Typography>
-                <Typography color="gray" mb={"8px"} fontSize={12}>This operation cannot be reversed and the order will need to be resubmitted.</Typography>
+                <Text mb={"8px"} size={"14px"}>Are you sure you want to cancel this order?</Text>
+                <Text color="gray" mb={"8px"} size={"12px"}>This operation cannot be reversed and the order will need to be resubmitted.</Text>
                 <Button
                     onClick={cancelOrderClick}
                     variant="outline"
@@ -106,6 +109,7 @@ export default function Order() {
     let { orderId } = useParams();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<IOrder>();
+    const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
 
     const handleSubmitClick = (trackingUrl: string) => {
     };
@@ -113,7 +117,7 @@ export default function Order() {
     useEffect(() => {
         setIsLoading(true);
 
-        backendAPI.get(`/orders/${orderId}`)
+        backendAPI(token).get(`/orders/${orderId}`)
             .then(response => {
                 setData(response.data);
                 setIsLoading(false);
@@ -125,8 +129,9 @@ export default function Order() {
 
     return (
         <>
+            <Breadcrumbs />
             {/* Top row */}
-            {isLoading ? <LoadingSkeletonSingle /> :
+            {isLoading ? <LoadingSkeletonSingle height={50} /> :
                 <Stack orientation="row" margin="0px 0px 30px 0px">
                     <Tooltip position="bottom" label={`Send ${data?.responder} a message on Teams`}>
                         <Button
@@ -187,7 +192,7 @@ export default function Order() {
                 </Stack>
             }
 
-            {isLoading ? <LoadingSkeletonMulti /> :
+            {isLoading ? <LoadingSkeletonSingle height={200} /> :
                 <Stack orientation="row" spacing="80px">
                     <Stack orientation="column">
                         <TableItemText label="Date" text={data?.submission_date} />
@@ -210,7 +215,7 @@ export default function Order() {
                 </Stack>
             }
 
-            {isLoading ? <LoadingSkeletonMulti /> :
+            {isLoading ? <LoadingSkeletonSingle height={350} /> :
                 <Stack orientation="column" margin="30px 0px 0px 0px">
                     <TextEditor content={`${data?.private_notes}`} />
                     <Button

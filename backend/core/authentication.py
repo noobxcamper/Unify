@@ -1,6 +1,5 @@
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-from django.contrib.auth.models import User
 from jwt.algorithms import RSAAlgorithm
 import jwt
 import requests
@@ -9,12 +8,13 @@ AZURE_TENANT_ID = "829c3abd-b89c-4d79-a1fb-6d8644f2fb53"
 AZURE_CLIENT_ID = "884883ce-6358-4dc6-b166-178c78620a9a"  # API Application (client) ID
 KEYS_URL = f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/discovery/v2.0/keys"
 
-class CustomUser:
+class ExperiorUser:
     def __init__(self, user_data):
         self.user_data = user_data
         self.is_authenticated = True  # This makes it behave like a logged-in user
+        self.is_anonymous = False
         self.roles = user_data.get("roles", [])  # Assuming roles are in the token
-
+    
     def get(self, key, default=None):
         return self.user_data.get(key, default)
 
@@ -60,6 +60,7 @@ def verify_token(token):
 class AzureADAuthentication(BaseAuthentication):
     def authenticate(self, request):
         auth_header = request.headers.get("Authorization")
+
         if not auth_header or not auth_header.startswith("Bearer "):
             return None  # No authentication provided
 
@@ -67,7 +68,6 @@ class AzureADAuthentication(BaseAuthentication):
 
         try:
             decoded_token = jwt.decode(token, options={"verify_signature": False})
-            print(f"Decoded token: {decoded_token}")
         except jwt.PyJWTError as e:
             raise AuthenticationFailed(f"Token decode error: {str(e)}")
 
@@ -77,6 +77,6 @@ class AzureADAuthentication(BaseAuthentication):
             raise AuthenticationFailed("Invalid token")
 
         # Create a custom user object with decoded token
-        request.user = CustomUser(decoded_token)
+        request.user = ExperiorUser(decoded_token)
 
-        return (request.user, None)  # Return the custom user object
+        return (request.user, token)  # Return the custom user object

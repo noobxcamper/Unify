@@ -3,7 +3,7 @@ from django.utils import timezone
 
 # Create your models here.
 class Incident(models.Model):
-    date = models.DateField(default=timezone.now)
+    date = models.DateTimeField(default=timezone.now)
     type = models.CharField(max_length=30, default='No type')
     name = models.CharField(max_length=100, default='No title')
     desc = models.CharField(max_length=10000, default='No description')
@@ -14,7 +14,7 @@ class Incident(models.Model):
 class Order(models.Model):
     # 0 = open, 1 = completed, 2 = in progress, 3 = closed
     submission_id = models.CharField(max_length=100, default='')
-    submission_date = models.DateField(default=timezone.now)
+    submission_date = models.DateField(default=timezone.now().date)
     status = models.IntegerField(default=0)
     responder = models.CharField(max_length=100, default='')
     email = models.EmailField(max_length=100, default='')

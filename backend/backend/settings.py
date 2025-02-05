@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from datetime import timedelta
 from pathlib import Path
 from os import path, environ
 from dotenv import load_dotenv, find_dotenv
@@ -33,38 +32,6 @@ ALLOWED_HOSTS = [
     '*'
 ]
 
-# AUTH KEYS
-#APP_ID = environ['APP_ID']
-#TENANT_ID = environ['TENANT_ID']
-#SCOPES = [
-#    "User.Read",
-#    "ChannelMessage.Send",
-#    "ChatMessage.Send"
-#]
-
-# Microsoft Teams Config
-#TEAM_ID =  environ['TEAM_ID']
-#CHANNEL_ID =  environ['CHANNEL_ID']
-
-# JWT and Auth setup
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-}
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "ALGORITHM": "RS256",
-    "SIGNING_KEY": None,  # MSAL tokens use asymmetric keys
-    "VERIFYING_KEY": "YOUR_AZURE_AD_PUBLIC_KEY",  # Fetch from Azure
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-}
-
 # DEV CORS SETUP
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
@@ -77,11 +44,13 @@ else:
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.staticfiles',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'rest_framework',
+    "rest_framework_api_key",
     'corsheaders',
     'core',
     'api'
@@ -89,11 +58,10 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'core.authentication.AzureADAuthentication',  # Path to your custom auth class
+        'core.authentication.AzureADAuthentication'
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-        'core.permissions.RoleBasedPermission'
+        "rest_framework_api_key.permissions.HasAPIKey",
     ],
 }
 
@@ -109,6 +77,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'backend.urls'
+
+STATIC_URL = '/static/'
+STATIC_ROOT = path.join(BASE_DIR, '/static/')
 
 TEMPLATES = [
     {
@@ -128,7 +99,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -138,7 +108,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

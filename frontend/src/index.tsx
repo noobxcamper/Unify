@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { Typography } from '@mui/material';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { MsalProvider } from '@azure/msal-react';
-import { PublicClientApplication } from '@azure/msal-browser';
-import { msalConfig } from './settings/authConfig';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Pages
@@ -18,10 +16,10 @@ import IncidentReportPage from './pages/IncidentReportPage'
 import IncidentPlanPage from './pages/IncidentPlanPage'
 import OrdersPage from './pages/OrdersPage';
 import Http404Page from './pages/Http404Page'
-import TodoListPage from './pages/TodoListPage';
+import DevelopmentPage from './pages/DevelopmentPage';
 import TicketsPage from './pages/TicketsPage';
 import AccountPage from './pages/AccountPage';
-import { Button, colorsTuple, createTheme, MantineProvider, virtualColor } from '@mantine/core';
+import { colorsTuple, createTheme, MantineProvider } from '@mantine/core';
 import { msalInstance } from './utils/MsalAuthHandler';
 
 // Place pages here for routing
@@ -64,7 +62,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'development',
-                Component: TodoListPage,
+                Component: DevelopmentPage,
             },
             {
                 path: 'incidents/plan',
@@ -90,7 +88,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <ProtectedRoute requiredRoles={["Admin, User"]}><UserApp /></ProtectedRoute>
+        element: <ProtectedRoute requiredRoles={["User"]}><UserApp /></ProtectedRoute>
     }
 ]);
 

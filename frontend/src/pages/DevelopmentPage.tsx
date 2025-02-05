@@ -7,7 +7,7 @@ import '../assets/css/todolist.css';
 const rickRoll = require("../assets/audio/Rick-Roll.mp3")
 const rickRollVideo = require("../assets/audio/Rick-Roll-Video.mp4")
 
-function TodoList() {
+function DevelopmentPage() {
     return (
         <>
             <Paper shadow="sm" radius="lg" withBorder p="lg" mb={20}>
@@ -24,6 +24,7 @@ function TodoList() {
                     <List.Item icon={<ThemeIcon color="teal" size={24} radius="xl"><IconCircleCheck size={16} /></ThemeIcon>}>Finish setting up the orders view page</List.Item>
                     <List.Item icon={<ThemeIcon color="teal" size={24} radius="xl"><IconCircleCheck size={16} /></ThemeIcon>}>Make breadcrumbs clickable links</List.Item>
                     <List.Item icon={<ThemeIcon color="teal" size={24} radius="xl"><IconCircleCheck size={16} /></ThemeIcon>}>Implement a rich text editor</List.Item>
+                    <List.Item icon={<ThemeIcon color="teal" size={24} radius="xl"><IconCircleCheck size={16} /></ThemeIcon>}>Implement RBAC</List.Item>
                     <List.Item>Finish implementing order submission functionality, needs to just send requests to the API</List.Item>
                     <List.Item>Allow scrolling inside the navigation sidebar</List.Item>
                 </List>
@@ -38,7 +39,6 @@ function TodoList() {
                     icon={<ThemeIcon color="blue" size={24} radius="xl"><IconCircleDashed size={16} /></ThemeIcon>}
                 >
                     <List.Item>Implement theme colors for dark and light mode</List.Item>
-                    <List.Item>Implement RBAC</List.Item>
                     <List.Item>User management</List.Item>
                     <List.Item>Knowledgebase? 👀</List.Item>
                     <List.Item>Tickets??? Very ambitious ❤️</List.Item>
@@ -73,4 +73,4 @@ function AudioTroll() {
     )
 }
 
-export default TodoList;
+export default DevelopmentPage;

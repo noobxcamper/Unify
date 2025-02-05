@@ -20,8 +20,7 @@ function AccountPage() {
     const getUserGroups = () => {
         setLoading(true);
 
-        graphAPI.defaults.headers.common = { 'Authorization': `Bearer ${localStorage.getItem(GRAPH_ACCESS_TOKEN)}` };
-        graphAPI.get("/users").then((response) => {
+        graphAPI(localStorage.getItem(GRAPH_ACCESS_TOKEN) ?? "None").get("/users").then((response) => {
             setUsers(response.data.value);
             setLoading(false);
         });

@@ -56,14 +56,29 @@ const didTokenExpire = (exp?: number) => {
  * @param requestScope the scopes to be passed to the request
  */
 const getIdTokenSilently = async () => {
-    msalInstance.acquireTokenSilent(apiScopes)
+    // Get current token
+    const currentToken = localStorage.getItem(API_ACCESS_TOKEN);
+
+    await msalInstance.acquireTokenSilent(apiScopes)
         .then((response) => {
-            localStorage.setItem(API_ACCESS_TOKEN, response.accessToken);
+            const newToken = response.accessToken;
+
+            if (currentToken !== newToken) {
+                localStorage.setItem(API_ACCESS_TOKEN, response.accessToken);
+            } else {
+                console.log("[ID Token Rewnewal]: Tokens are the same, not updating local storage.");
+            }
         })
         .catch(() => {
             msalInstance.acquireTokenPopup(apiScopes)
                 .then((response) => {
-                    localStorage.setItem(API_ACCESS_TOKEN, response.accessToken);
+                    const newToken = response.accessToken;
+
+                    if (currentToken !== newToken) {
+                        localStorage.setItem(API_ACCESS_TOKEN, response.accessToken);
+                    } else {
+                        console.log("[ID Token Rewnewal]: Tokens are the same, not updating local storage.");
+                    }
                 })
                 .catch((error) => { console.error(error) });
         });
@@ -74,16 +89,31 @@ const getIdTokenSilently = async () => {
  * If the token cannot be acquired silently, display an interactive sign in request.
  */
 const getGraphTokenSilently = async () => {
+    // Get current token
+    const currentToken = localStorage.getItem(GRAPH_ACCESS_TOKEN);
+
     msalInstance.acquireTokenSilent(graphScopes)
         .then((response) => {
-            localStorage.setItem(GRAPH_ACCESS_TOKEN, response.accessToken);
+            const newToken = response.accessToken;
+
+            if (currentToken !== newToken) {
+                localStorage.setItem(GRAPH_ACCESS_TOKEN, response.accessToken);
+            } else {
+                console.log("[Graph Token Rewnewal]: Tokens are the same, not updating local storage.");
+            }
         })
         .catch((error) => {
             console.error(error);
 
             msalInstance.acquireTokenPopup(graphScopes)
                 .then((response) => {
-                    localStorage.setItem(GRAPH_ACCESS_TOKEN, response.accessToken);
+                    const newToken = response.accessToken;
+
+                    if (currentToken !== newToken) {
+                        localStorage.setItem(GRAPH_ACCESS_TOKEN, response.accessToken);
+                    } else {
+                        console.log("[Graph Token Rewnewal]: Tokens are the same, not updating local storage.");
+                    }
                 })
                 .catch((error) => { console.error(error) });
         });
@@ -126,6 +156,18 @@ const logoutHandler = () => {
         // Redirect to login page
         window.location.href = "/login";
     });
+}
+
+/**
+ * Logs out the user by removing their access tokens, but not signing them out of Microsoft services entirely. Redirects to login page afterwards.
+ */
+const softLogout = () => {
+    // Clear the tokens
+    localStorage.removeItem(GRAPH_ACCESS_TOKEN);
+    localStorage.removeItem(API_ACCESS_TOKEN);
+
+    // Redirect to login page
+    window.location.href = "/login";
 }
 
 const isAdmin = (tokenClaim: IdTokenClaims) => {
@@ -175,6 +217,7 @@ export {
     isAdmin,
     loginHandler,
     logoutHandler,
+    softLogout,
     loginSuccessRedirect,
     getIdTokenSilently,
     getGraphTokenSilently,

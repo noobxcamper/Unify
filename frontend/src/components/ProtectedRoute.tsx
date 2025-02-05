@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useMsal } from "@azure/msal-react";
 import { AccountInfo, IdTokenClaims } from "@azure/msal-browser";
-import { Box, Button, LoadingOverlay, Paper, Text } from "@mantine/core";
-import { didTokenExpire, getIdTokenSilently, getGraphTokenSilently, GRAPH_ACCESS_TOKEN, logoutHandler, isAdmin } from "../utils/MsalAuthHandler";
-import { InvalidTokenError, jwtDecode } from "jwt-decode";
-import { IconHome } from "@tabler/icons-react";
+import { Box, Button, Paper, Text } from "@mantine/core";
+import { getIdTokenSilently, getGraphTokenSilently, isAdmin, logoutHandler } from "../utils/MsalAuthHandler";
+import { InvalidTokenError } from "jwt-decode";
+import { IconChevronLeft, IconLogout } from "@tabler/icons-react";
+import LoadingOverlay from "./LoadingOverlay";
 
 function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRoles: string[] }) {
     // Get the MSAL instance object
     const { instance } = useMsal();
-
     const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
     // Navigation hook
@@ -21,29 +21,18 @@ function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRo
             // Grab the token from the local storage
             const idTokenClaims: IdTokenClaims = instance.getActiveAccount()?.idTokenClaims as IdTokenClaims;
 
-            // If the user is an Admin
+            // Check if is admin and grab the graph token as well
             if (isAdmin(idTokenClaims)) {
-                // Get the graph token from the localstorage
-                const graphToken = jwtDecode(localStorage.getItem(GRAPH_ACCESS_TOKEN) ?? "Empty");
-
-                // If the token expired
-                if (didTokenExpire(graphToken.exp)) {
-                    // Refresh the token by grabbing it again silently
-                    console.log("Graph API Token expired. Refreshing...");
-                    getGraphTokenSilently();
-                }
-            }
-
-            // If the application api token expired
-            if (didTokenExpire(idTokenClaims.exp)) {
                 // Refresh the token by grabbing it again silently
-                getIdTokenSilently().then(() => {
-                    console.log("Application API Token expired. Refreshing...");
-                });
+                getGraphTokenSilently();
             }
+
+            // Refresh the token by grabbing it again silently
+            getIdTokenSilently();
         }
         catch (error) {
             if (error instanceof InvalidTokenError) {
+                console.log("Invalid Token, likely expired");
                 console.log(error);
             }
         }
@@ -56,19 +45,21 @@ function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRo
 
         // Check if account is valid first
         if (activeAccount) {
+            // Get the token id claims
             const idTokenClaims = activeAccount.idTokenClaims as IdTokenClaims;
-            const hasRequiredRole = idTokenClaims.roles?.filter(role => requiredRoles.includes(role));
-            console.log(hasRequiredRole);
+            
+            // Get the roles for the user from the claims
+            const userRoles: string[] = idTokenClaims.roles!;
 
-            idTokenClaims.roles?.forEach((role) => {
-                if (requiredRoles.includes(role)) {
-                    console.log(role);
-                    setIsAuthorized(true);
-                } else {
-                    console.log("nope");
-                    setIsAuthorized(false);
-                }
-            });
+            // Check to see if the user has ALL the required roles for this page
+            const hasAllRoles = requiredRoles.every(role => userRoles.includes(role));
+
+            // If the user is Admin OR has all roles, allow access
+            if(userRoles.includes("Admin") || hasAllRoles) {
+                setIsAuthorized(true);
+            } else {
+                setIsAuthorized(false);
+            }
         } else {
             // Account is invalid, meaning it's most likely not signed in, redirect to login page
             setIsAuthorized(false);
@@ -78,17 +69,15 @@ function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRo
     };
 
     useEffect(() => {
-        (async () => {
-            await onPageLoad();
-            await refreshTokens();
-        })();
+        onPageLoad();
+        refreshTokens();
     }, []);
 
     // If authorized is null, meaning the page is still loading
     if (isAuthorized === null) {
         return (
             <>
-                <LoadingOverlay visible={true} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+                <LoadingOverlay visible={true} overlayMessage="Page is loading... please wait" />
             </>
         )
     }
@@ -102,28 +91,32 @@ function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRo
     }
     else {
         return (
-            <>
-                <Box style={{
+            <Box style={{
+                display: "flex",
+                height: "100vh",
+                alignItems: "center",
+                justifyContent: "center",
+            }}>
+                <Paper shadow={"lg"} style={{
                     display: "flex",
-                    height: "100vh",
+                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
+                    padding: "64px",
+                    borderRadius: "8px",
+                    border: "1px solid #e9e9e9"
                 }}>
-                    <Paper shadow={"lg"} style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: "64px",
-                        borderRadius: "8px",
-                        border: "1px solid #e9e9e9"
+                    <Text mb={"lg"} size={"26px"} fw={600}>You do not have access to this page.</Text>
+                    <Text mb={"lg"}>If you believe this to be a mistake, please contact your IT administrator.</Text>
+
+                    <Box style={{
+                        display: "inline-flex"
                     }}>
-                        <Text size={"26px"} fw={600}>You do not have access to this page.</Text>
-                        <Text my={"xl"}>If you believe this to be a mistake, please contact your IT administrator.</Text>
-                        <Button leftSection={<IconHome />} onClick={() => window.location.href= "/"}>Return Home</Button>
-                    </Paper>
-                </Box>
-            </>
+                        <Button mr={"md"} leftSection={<IconChevronLeft />} onClick={() => navigate(-1)}>Previous Page</Button>
+                        <Button leftSection={<IconLogout />} onClick={logoutHandler}>Logout</Button>
+                    </Box>
+                </Paper>
+            </Box>
         )
     }
 }

@@ -1,11 +1,17 @@
 import axios from "axios";
 
-const backendAPI = axios.create({
+const backendAPI = (token: string) => axios.create({
     baseURL: "http://localhost:36594/api",
+    headers: {
+        Authorization: `Bearer ${token}`,
+    },
 });
 
-const graphAPI = axios.create({
+const graphAPI = (token: string) => axios.create({
     baseURL: "https://graph.microsoft.com/v1.0",
+    headers: {
+        Authorization: `Bearer ${token}`,
+    },
 });
 
 export {
