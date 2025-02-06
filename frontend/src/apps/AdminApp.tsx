@@ -2,9 +2,7 @@ import React from 'react';
 import { createTheme } from '@mui/material';
 import { PageContent } from '../layouts/DashboardLayout';
 import { Outlet } from 'react-router';
-import { Box, Button, Divider, Paper, Text } from '@mantine/core';
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
-import { IconLogin2 } from '@tabler/icons-react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import '@mantine/core/styles.css';
 
@@ -35,7 +33,7 @@ function App() {
                 </DashboardLayout>
             </AuthenticatedTemplate>
 
-            <UnauthenticatedTemplate>
+            {/* <UnauthenticatedTemplate>
                 <Box style={{
                     display: "flex",
                     height: "100vh",
@@ -57,7 +55,7 @@ function App() {
                         <Button leftSection={<IconLogin2 />} onClick={() => window.location.href = "/login"}>Login</Button>
                     </Paper>
                 </Box>
-            </UnauthenticatedTemplate>
+            </UnauthenticatedTemplate> */}
         </>
     );
 }

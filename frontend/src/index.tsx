@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Typography } from '@mui/material';
 import { createBrowserRouter, RouterProvider } from 'react-router';
+import { colorsTuple, createTheme, MantineProvider, Text } from '@mantine/core';
+import { msalInstance } from './utils/MsalAuthHandler';
 import { MsalProvider } from '@azure/msal-react';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -19,8 +20,6 @@ import Http404Page from './pages/Http404Page'
 import DevelopmentPage from './pages/DevelopmentPage';
 import TicketsPage from './pages/TicketsPage';
 import AccountPage from './pages/AccountPage';
-import { colorsTuple, createTheme, MantineProvider } from '@mantine/core';
-import { msalInstance } from './utils/MsalAuthHandler';
 
 // Place pages here for routing
 const router = createBrowserRouter([
@@ -54,11 +53,11 @@ const router = createBrowserRouter([
             },
             {
                 path: 'tickets/loser',
-                element: <Typography fontSize={32}>Loser</Typography>
+                element: <Text size="32">Loser</Text>
             },
             {
                 path: 'kb',
-                element: <Typography fontSize={32}>Knowledgebase</Typography>
+                element: <Text size="32">Knowledgebase</Text>
             },
             {
                 path: 'development',

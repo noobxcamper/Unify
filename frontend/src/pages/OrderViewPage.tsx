@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Button, Input, Modal, Text, Tooltip } from "@mantine/core";
-import { useDisclosure } from '@mantine/hooks';
-import { IconBrandTeams, IconCheck, IconDeviceFloppy, IconExternalLink, IconMail, IconProgress, IconTruck, IconX } from "@tabler/icons-react";
-import { LoadingSkeletonSingle, LoadingSkeletonMulti } from "../components/LoadingSkeleton";
+import { ActionIcon, Button, Group, Input, Menu, Modal, Text, Textarea, Tooltip } from "@mantine/core";
+import { IconBell, IconBrandTeams, IconCheck, IconDeviceFloppy, IconDots, IconExternalLink, IconMail, IconTruck, IconX } from "@tabler/icons-react";
+import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
 import { formatPrice } from "../utils/utils";
-import { backendAPI } from "../utils/api";
+import { backendAPI, powerAutomateApi } from "../utils/api";
 import Stack from "../components/Stack";
 import TextEditor from "../components/RichTextEditor";
 import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
 import Breadcrumbs from "../components/Breadcrumbs";
+import { notifications } from "@mantine/notifications";
 
 interface IOrder {
     id: number,
@@ -32,87 +32,103 @@ interface IOrder {
     private_notes: string
 }
 
-function SubmitButtonWithModal({ orderId }) {
-    const [opened, { open, close }] = useDisclosure(false);
-    const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
+function SubmitModal({ token, data, modalOpened, onModalClose }: { token: string, data: IOrder, modalOpened: boolean, onModalClose: () => void }) {
+    const [notes, setNotes] = useState<string>();
+    const [trackingUrl, setTrackingUrl] = useState<string>();
 
     const submitOrderClick = () => {
-        backendAPI(token).patch(`/orders/${orderId}`, { "status": 1 });
-        window.location.reload();
+        // Update the database on the backend
+        backendAPI(token).patch(`/orders/${data.submission_id}`, { "status": 1, "notes": notes, "tracking_url": trackingUrl }).then(() => {
+            // Submit notification to Power Automate
+            powerAutomateApi(data).then(() =>{ 
+                // Refresh the current page
+                window.location.reload();
+            });
+        });
     };
 
     return (
-        <>
-            <Tooltip position="bottom" label="Submit this order">
-                <Button
-                    onClick={open}
-                    variant="outline"
-                    leftSection={<IconCheck />}>
-                    Submit Order
-                </Button>
-            </Tooltip>
-
-            <Modal opened={opened} onClose={close} title="Submit Order">
-                <Input.Wrapper label="Tracking URL" description="If no tracking url is provided, leave blank" mb={"8px"}>
-                    <Input />
-                </Input.Wrapper>
-                <Text size={"12px"} mb={"8px"}>Submitting an order cannot be reversed. Please complete all necessary steps before submitting.</Text>
-                <Button
-                    onClick={submitOrderClick}
-                    variant="outline"
-                    color="green"
-                    leftSection={<IconCheck />}>
-                    Submit
-                </Button>
-            </Modal>
-        </>
+        <Modal opened={modalOpened} onClose={onModalClose} title="Submit Order">
+            <Input.Wrapper label="Tracking URL" description="If no tracking URL is provided, leave blank" mb="8px">
+                <Input onChange={(event) => setTrackingUrl(event.currentTarget.value)} />
+            </Input.Wrapper>
+            <Input.Wrapper label="Notes" mb="8px">
+                <Textarea onChange={(event) => setNotes(event.currentTarget.value)} />
+            </Input.Wrapper>
+            <Text size="12px" mb="8px">
+                Submitting an order cannot be reversed. Please complete all necessary steps before submitting.
+            </Text>
+            <Text size="12px" mb="8px">
+                Note: It can take up to 30 minutes for the notification to reach the user.
+            </Text>
+            <Button
+                onClick={submitOrderClick}
+                variant="outline"
+                color="green"
+                leftSection={<IconCheck />}
+            >
+                Submit
+            </Button>
+        </Modal>
     )
 }
 
-function CancelButtonWithModal({ orderId }) {
-    const [opened, { open, close }] = useDisclosure(false);
-    const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
+function CancelModal({ token, data, modalOpened, onModalClose }: { token: string, data: IOrder, modalOpened: boolean, onModalClose: () => void }) {
+    const [notes, setNotes] = useState<string>();
 
     const cancelOrderClick = () => {
-        backendAPI(token).patch(`/orders/${orderId}`, { "status": 3 });
-        window.location.reload();
+        // Update the database on the backend
+        backendAPI(token).patch(`/orders/${data.submission_id}`, { "status": 3, "notes": notes }).then(() => {
+            // Submit notification to Power Automate
+            powerAutomateApi(data).then(() => {
+                // Refresh the current page
+                window.location.reload();
+            });
+        });
     };
 
-
     return (
-        <>
-            <Tooltip position="bottom" label="Cancel this order">
-                <Button
-                    onClick={open}
-                    variant="outline"
-                    leftSection={<IconX />}>
-                    Cancel Order
-                </Button>
-            </Tooltip>
-
-            <Modal opened={opened} onClose={close} title="Cancel Order">
-                <Text mb={"8px"} size={"14px"}>Are you sure you want to cancel this order?</Text>
-                <Text color="gray" mb={"8px"} size={"12px"}>This operation cannot be reversed and the order will need to be resubmitted.</Text>
-                <Button
-                    onClick={cancelOrderClick}
-                    variant="outline"
-                    color="red"
-                    leftSection={<IconX />}>
-                    Cancel
-                </Button>
-            </Modal>
-        </>
+        <Modal opened={modalOpened} onClose={onModalClose} title="Submit Order">
+            <Text mb={"8px"} size={"14px"}>Are you sure you want to cancel this order?</Text>
+            <Text c="gray" mb={"8px"} size={"12px"}>This operation cannot be reversed and the order will need to be resubmitted.</Text>
+            <Input.Wrapper label="Notes" mb="16px">
+                <Textarea onChange={(event) => setNotes(event.currentTarget.value)} />
+            </Input.Wrapper>
+            <Button
+                onClick={cancelOrderClick}
+                variant="outline"
+                color="red"
+                leftSection={<IconX />}>
+                Cancel
+            </Button>
+        </Modal>
     )
 }
 
-export default function Order() {
-    let { orderId } = useParams();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [data, setData] = useState<IOrder>();
+const saveNotes = ({ orderId, notes }) => {
+    // Get the token from local storage
     const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
 
-    const handleSubmitClick = (trackingUrl: string) => {
-    };
+    // Patch the order with the new private notes
+    backendAPI(token).patch(`/orders/${orderId}`, { "private_notes": notes }).then(() => {
+        // Show notification
+        notifications.show({
+            title: "Private Notes Saved",
+            message: "Your private notes have been successfully saved for this order!",
+            position: "top-right"
+        })
+    });
+};
+
+function OrderViewPage() {
+    let { orderId } = useParams();
+    const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [data, setData] = useState<IOrder>();
+
+    // Modal states
+    const [submitModalOpened, setSubmitModalOpened] = useState<boolean>(false);
+    const [cancelModalOpened, setCancelModalOpened] = useState<boolean>(false);
 
     useEffect(() => {
         setIsLoading(true);
@@ -132,64 +148,81 @@ export default function Order() {
             <Breadcrumbs />
             {/* Top row */}
             {isLoading ? <LoadingSkeletonSingle height={50} /> :
-                <Stack orientation="row" margin="0px 0px 30px 0px">
-                    <Tooltip position="bottom" label={`Send ${data?.responder} a message on Teams`}>
-                        <Button
-                            variant="outline"
-                            leftSection={<IconBrandTeams />}
-                            component="a"
-                            href={`sip:${data?.email}`}>
-                            Send Message
-                        </Button>
-                    </Tooltip>
+                <Group mb="30px">
+                    <Button
+                        variant="outline"
+                        leftSection={<IconDeviceFloppy />}
+                        onClick={() => saveNotes({ orderId: data?.submission_id, notes: "test" })}>
+                        Save Private Notes
+                    </Button>
 
-                    <Tooltip position="bottom" label={`Send ${data?.responder} an email`}>
-                        <Button
-                            variant="outline"
-                            leftSection={<IconMail />}
-                            component="a"
-                            href={`mailto:${data?.email}`}>
-                            Send Email
-                        </Button>
-                    </Tooltip>
+                    <Menu
+                        shadow="md"
+                        width={200}>
+                        <Menu.Target>
+                            <ActionIcon variant="subtle">
+                                <IconDots />
+                            </ActionIcon>
+                        </Menu.Target>
 
-                    <Tooltip position="bottom" label="Visit product page in a new tab">
-                        <Button
-                            variant="outline"
-                            leftSection={<IconExternalLink />}
-                            component="a"
-                            href={data?.hyperlink}
-                            target="_blank">
-                            Product Page
-                        </Button>
-                    </Tooltip>
+                        <Menu.Dropdown>
+                            <Menu.Label>Order Actions</Menu.Label>
 
-                    <Tooltip position="bottom" label={data?.tracking_url ? `Visit tracking url page in a new tab` : "No tracking url"}>
-                        <Button
-                            variant="outline"
-                            leftSection={<IconTruck />}
-                            component="a"
-                            href={data?.tracking_url}
-                            target="_blank">
-                            Tracking
-                        </Button>
-                    </Tooltip>
-
-
-                    {data?.status === 3 || data?.status === 1 ?
-                        <></> :
-                        <>
-                            <Tooltip position="bottom" label="Mark order as in progress">
-                                <Button
-                                    variant="outline"
-                                    leftSection={<IconProgress />}>
-                                    In Progress
-                                </Button>
+                            <Tooltip position="right" label="Submit the order">
+                                <Menu.Item leftSection={<IconCheck size={18} />} onClick={() => setSubmitModalOpened(true)} disabled={data?.status !== 0 ? true : false}>
+                                    Submit
+                                </Menu.Item>
                             </Tooltip>
-                            <SubmitButtonWithModal orderId={data?.id} />
-                            <CancelButtonWithModal orderId={data?.id} />
-                        </>}
-                </Stack>
+
+                            <Tooltip position="right" label="Cancel the order">
+                                <Menu.Item leftSection={<IconX size={18} />} onClick={() => setCancelModalOpened(true)} disabled={data?.status !== 0 ? true : false}>
+                                    Cancel
+                                </Menu.Item>
+                            </Tooltip>
+
+                            <Menu.Divider />
+
+                            <Menu.Label>Order Information</Menu.Label>
+
+                            <Tooltip position="right" label="Opens product page in a new tab">
+                                <Menu.Item component="a" leftSection={<IconExternalLink size={18} />} href={data?.hyperlink} target="_blank">
+                                    Product Page
+                                </Menu.Item>
+                            </Tooltip>
+
+                            <Tooltip position="right" label="Opens tracking page in a new tab">
+                                <Menu.Item component="a" leftSection={<IconTruck size={18} />} href={data?.tracking_url} target="_blank" disabled={data?.tracking_url !== "No tracking url" ? false : true}>
+                                    Tracking Page
+                                </Menu.Item>
+                            </Tooltip>
+
+                            <Menu.Divider />
+
+                            <Menu.Label>Communication</Menu.Label>
+
+                            <Tooltip position="right" label="Send user an email">
+                                <Menu.Item component="a" leftSection={<IconMail size={18} />} href={`mailto:${data?.email}`}>
+                                    Send Email
+                                </Menu.Item>
+                            </Tooltip>
+
+                            <Tooltip position="right" label="Send user a teams message">
+                                <Menu.Item component="a" leftSection={<IconBrandTeams size={18} />} href={`sip:${data?.email}`}>
+                                    Send Teams Message
+                                </Menu.Item>
+                            </Tooltip>
+
+                            <Tooltip position="right" label="Send user a notification of order completion or cancellation">
+                                <Menu.Item leftSection={<IconBell size={18} />} onClick={() => powerAutomateApi(data)}>
+                                    Send Notification
+                                </Menu.Item>
+                            </Tooltip>
+                        </Menu.Dropdown>
+                    </Menu>
+
+                    <SubmitModal token={token} data={data!} modalOpened={submitModalOpened} onModalClose={() => setSubmitModalOpened(false)} />
+                    <CancelModal token={token} data={data!} modalOpened={cancelModalOpened} onModalClose={() => setCancelModalOpened(false)} />
+                </Group>
             }
 
             {isLoading ? <LoadingSkeletonSingle height={200} /> :
@@ -218,13 +251,10 @@ export default function Order() {
             {isLoading ? <LoadingSkeletonSingle height={350} /> :
                 <Stack orientation="column" margin="30px 0px 0px 0px">
                     <TextEditor content={`${data?.private_notes}`} />
-                    <Button
-                        variant="outline"
-                        leftSection={<IconDeviceFloppy />}>
-                        Save
-                    </Button>
                 </Stack>
             }
         </>
     )
 }
+
+export default OrderViewPage;

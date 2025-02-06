@@ -24,7 +24,7 @@ class OrdersAPI(APIView):
     permission_classes = [HasAPIKey | RBAC]
 
     def get(self, request, order_id):
-        order = Order.objects.get(id=order_id)
+        order = Order.objects.get(submission_id=order_id)
         serializer = OrderSerializer(order, data=request.data)
 
         if serializer.is_valid():
@@ -43,7 +43,7 @@ class OrdersAPI(APIView):
             print(serializer.errors)
     
     def patch(self, request, order_id):
-        order = Order.objects.get(id=order_id)
+        order = Order.objects.get(submission_id=order_id)
         serializer = OrderSerializer(order, data=request.data, partial=True)
 
         if serializer.is_valid():
@@ -53,7 +53,7 @@ class OrdersAPI(APIView):
             print(serializer.errors)
     
     def delete(self, request, order_id):
-        order = Order.objects.get(id=order_id)
+        order = Order.objects.get(submission_id=order_id)
         order.delete()
 
         return Response(status=204)

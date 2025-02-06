@@ -9,7 +9,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 
 function OrdersTable() {
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 50, headerClassName: "mui-table-header" },
+        { field: 'submission_id', headerName: 'ID', width: 50, headerClassName: "mui-table-header" },
         { field: 'submission_date', headerName: 'Date', headerClassName: "mui-table-header" },
         { field: 'status', headerName: 'Status', flex: 1, headerClassName: "mui-table-header", valueFormatter: (val) => getOrderStatusText(val), renderCell: (params) => {return ( <TableItemPill status={params.value} /> )} },
         { field: 'department', headerName: 'Department', flex: 1, headerClassName: "mui-table-header" },
@@ -22,7 +22,7 @@ function OrdersTable() {
     const navigate = useNavigate();
 
     const rowClick: GridEventListener<'rowClick'> = (params) => {
-        navigate(`${params.row.id}`);
+        navigate(`${params.row.submission_id}`);
     }
 
     return (

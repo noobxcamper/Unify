@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Box, Container, Grid2, Typography } from "@mui/material";
-import { ActionIcon, Divider } from "@mantine/core";
+import { Container, Grid2 } from "@mui/material";
+import { Box, ActionIcon, Divider, Button, Text } from "@mantine/core";
 import { Navigation, ListSection, ListItemLink } from "../components/Navigation";
 import AccountMenuButton from "../components/AccountMenuButton";
 import BrandLogo from "../assets/img/brand.png"
@@ -16,26 +16,16 @@ import {
     IconLibrary,
     IconCode,
     IconBell,
-    IconMenu2
+    IconMenu2,
+    IconExternalLink
 } from '@tabler/icons-react'
 
 function Branding({ title = "App", icon }) {
     return (
         <>
-            <Box sx={{
-                display: "inline-flex",
-                alignItems: "center",
-                px: 1,
-                mb: 4
-            }}>
+            <Box px="8px" mb="32px" style={{ display: "inline-flex", alignItems: "center" }}>
                 <img className="DashboardItemIcon" src={icon} height={36} width={36} />
-                <Typography sx={{
-                    fontSize: 28,
-                    fontWeight: 600,
-                    padding: 0,
-                    marginLeft: "8px",
-                    flexGrow: 1,
-                }}>{title}</Typography>
+                <Text size="28px" fw={600} p={0} ml="8px" style={{ flexGrow: 1 }}>{title}</Text>
             </Box>
         </>
     )
@@ -44,7 +34,7 @@ function Branding({ title = "App", icon }) {
 function PageHeader({ onMenuClick }) {
     return (
         <>
-            <Box sx={{ height: 58, px: 2, display: "inline-flex", width: "100%", alignItems: "center", borderBottom: "1px solid #e9e9e9" }}>
+            <Box px="16px" style={{ height: 58, display: "inline-flex", width: "100%", alignItems: "center", borderBottom: "1px solid #e9e9e9" }}>
                 <ActionIcon
                     hiddenFrom="xl"
                     variant="subtle"
@@ -55,7 +45,16 @@ function PageHeader({ onMenuClick }) {
                     <IconMenu2 size={22} />
                 </ActionIcon>
 
-                <Box sx={{ display: "flex", width: "100%", justifyContent: "end" }}>
+                <Box style={{ display: "flex", width: "100%", justifyContent: "end", alignItems: "center" }}>
+                    <Button
+                        component="a"
+                        href="/"
+                        target="_blank"
+                        mr="8px"
+                        variant="light"
+                        leftSection={<IconExternalLink />}>
+                        Client Portal
+                    </Button>
                     <ActionIcon
                         variant="subtle"
                         style={{
@@ -93,7 +92,7 @@ function Dashboard({ children }) {
     }
 
     return (
-        <>
+        <Box style={{ position: "relative" }}>
             <Grid2 container sx={{ height: "100vh" }}>
                 <Grid2 sx={{ width: "auto" }}>
                     <Navigation open={open} onClose={closeDrawer}>
@@ -131,7 +130,7 @@ function Dashboard({ children }) {
                     </Container>
                 </Grid2>
             </Grid2>
-        </>
+        </Box>
     )
 }
 

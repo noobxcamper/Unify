@@ -1,5 +1,4 @@
 import React from "react";
-import { List, Typography, ListItem, Link } from "@mui/material";
 import { Box, Button, Drawer, Text, Tooltip } from "@mantine/core";
 
 function Navigation({ open = false, onClose, children }) {
@@ -52,26 +51,6 @@ function ListItemLink({ title = "Link", link = "/", icon }) {
     return (
         <>
             <Tooltip label={title} position="right">
-                {/* <Link sx={{
-                    display: "inline-flex",
-                    height: "100%",
-                    color: "black",
-                    width: "100%",
-                    alignItems: "center",
-                    borderRadius: 2,
-                    textDecoration: "none",
-                    p: 1,
-                    ":hover":
-                    {
-                        bgcolor: "primary.main",
-                        color: "whitesmoke"
-                    }
-                }} href={link}>
-                    {icon}
-                    <Typography
-                        fontSize={14}
-                        ml={2}>{title}</Typography>
-                </Link> */}
                 <Button
                     className="LinkButton"
                     style={{

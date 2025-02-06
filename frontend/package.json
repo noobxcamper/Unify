@@ -10,6 +10,7 @@
     "@emotion/styled": "^11.14.0",
     "@mantine/core": "^7.16.2",
     "@mantine/hooks": "^7.16.2",
+    "@mantine/notifications": "^7.16.2",
     "@mantine/tiptap": "^7.16.2",
     "@mui/material": "^6.4.0",
     "@mui/x-data-grid": "^7.24.0",

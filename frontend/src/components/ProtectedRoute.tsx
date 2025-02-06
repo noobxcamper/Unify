@@ -63,8 +63,8 @@ function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRo
         } else {
             // Account is invalid, meaning it's most likely not signed in, redirect to login page
             setIsAuthorized(false);
-            navigate("/login");
-            // navigate(`/login?redirect=${window.location.pathname}`);
+            // navigate("/login");
+            navigate(`/login?redirect=${window.location.pathname}`);
         }
     };
 

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useAccount } from "@azure/msal-react";
 import { graphAPI } from "../utils/api";
 import { GRAPH_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
-import { LoadingOverlay, Paper, Text } from "@mantine/core";
+import { LoadingOverlay, Paper, Tabs, Text } from "@mantine/core";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import Breadcrumbs from "../components/Breadcrumbs";
 
-function AccountPage() {
+function GraphTest() {
     const account = useAccount();
     const [loading, setLoading] = useState<boolean>(false);
     const [users, setUsers] = useState<[]>();
@@ -28,7 +29,7 @@ function AccountPage() {
 
     useEffect(() => {
         getUserGroups();
-    }, [])
+    }, []);
 
     return (
         <>
@@ -64,6 +65,27 @@ function AccountPage() {
                     }}
                 />
             </Paper>
+        </>
+    )
+}
+
+function AccountPage() {
+
+
+    return (
+        <>
+            <Breadcrumbs />
+            <Tabs defaultValue="graph-test">
+                <Tabs.List>
+                    <Tabs.Tab value="graph-test">
+                        Graph API Test
+                    </Tabs.Tab>
+                </Tabs.List>
+
+                <Tabs.Panel value="graph-test">
+                    <GraphTest />
+                </Tabs.Panel>
+            </Tabs>
         </>
     )
 }

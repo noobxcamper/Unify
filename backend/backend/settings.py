@@ -41,6 +41,9 @@ else:
         'http://99.244.215.155:3000',
     ]
 
+# Required for display the admin page inside an iFrame on the frontend
+X_FRAME_OPTIONS = 'ALLOW-FROM http://localhost:3000'
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',

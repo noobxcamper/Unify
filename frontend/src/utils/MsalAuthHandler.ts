@@ -27,7 +27,7 @@ const apiScopes = {
 const graphScopes = {
     scopes: [
         "User.Read",
-        "User.ReadBasic.All"
+        "User.ReadBasic.All",
     ]
 };
 
