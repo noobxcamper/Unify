@@ -20,12 +20,7 @@ function AccountMenuButton() {
         <>
             <Menu shadow="md" width={200} opened={opened} onChange={setOpened}>
                 <Menu.Target>
-                    <ActionIcon
-                        onClick={openMenu}
-                        variant="subtle"
-                        style={{
-                            color: "black",
-                        }}>
+                    <ActionIcon className="unify-button-subtle" onClick={openMenu}>
                         <IconUserCircle size={22} />
                     </ActionIcon>
                 </Menu.Target>

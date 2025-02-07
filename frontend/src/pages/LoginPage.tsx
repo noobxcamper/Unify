@@ -21,7 +21,7 @@ function Login() {
                     justifyContent: "center",
                     padding: "24px",
                     borderRadius: "16px",
-                    border: "1px solid #e9e9e9"
+                    border: "1px solid var(--divider-border-color)"
                 }}>
                     <Typography fontSize={38}>Unify</Typography>
                     <Typography fontSize={14} mb={4}>BETA</Typography>

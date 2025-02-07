@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { ActionIcon, Button, Group, Input, Menu, Modal, Text, Textarea, Tooltip } from "@mantine/core";
-import { IconBell, IconBrandTeams, IconCheck, IconDeviceFloppy, IconDots, IconExternalLink, IconMail, IconTruck, IconX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { IconBell, IconBrandTeams, IconCheck, IconDeviceFloppy, IconDots, IconExternalLink, IconMail, IconProgress, IconTruck, IconX } from "@tabler/icons-react";
 import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
-import { formatPrice } from "../utils/utils";
+import { formatPrice } from "../utils/utilities";
 import { backendAPI, powerAutomateApi } from "../utils/api";
+import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
 import Stack from "../components/Stack";
 import TextEditor from "../components/RichTextEditor";
-import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
-import Breadcrumbs from "../components/Breadcrumbs";
-import { notifications } from "@mantine/notifications";
 
 interface IOrder {
     id: number,
@@ -39,8 +38,10 @@ function SubmitModal({ token, data, modalOpened, onModalClose }: { token: string
     const submitOrderClick = () => {
         // Update the database on the backend
         backendAPI(token).patch(`/orders/${data.submission_id}`, { "status": 1, "notes": notes, "tracking_url": trackingUrl }).then(() => {
+            // Set the data status to in progress
+            data.status = 1;
             // Submit notification to Power Automate
-            powerAutomateApi(data).then(() =>{ 
+            powerAutomateApi(data).then(() => {
                 // Refresh the current page
                 window.location.reload();
             });
@@ -79,6 +80,8 @@ function CancelModal({ token, data, modalOpened, onModalClose }: { token: string
     const cancelOrderClick = () => {
         // Update the database on the backend
         backendAPI(token).patch(`/orders/${data.submission_id}`, { "status": 3, "notes": notes }).then(() => {
+            // Set the data status to in progress
+            data.status = 3;
             // Submit notification to Power Automate
             powerAutomateApi(data).then(() => {
                 // Refresh the current page
@@ -105,17 +108,25 @@ function CancelModal({ token, data, modalOpened, onModalClose }: { token: string
     )
 }
 
-const saveNotes = ({ orderId, notes }) => {
-    // Get the token from local storage
-    const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
+const inProgress = ({ token, data }: { token: string, data: IOrder | any }) => {
+    backendAPI(token).patch(`/orders/${data.submission_id}`, { "status": 2 }).then(() => {
+        // Set the data status to in progress
+        data.status = 2;
+        // Submit notification to Power Automate
+        powerAutomateApi(data).then(() => {
+            // Refresh the current page
+            window.location.reload();
+        });
+    });
+}
 
+const saveNotes = ({ token, orderId, notes }) => {
     // Patch the order with the new private notes
     backendAPI(token).patch(`/orders/${orderId}`, { "private_notes": notes }).then(() => {
         // Show notification
         notifications.show({
             title: "Private Notes Saved",
             message: "Your private notes have been successfully saved for this order!",
-            position: "top-right"
         })
     });
 };
@@ -125,6 +136,7 @@ function OrderViewPage() {
     const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<IOrder>();
+    const [editorText, setEditorText] = useState<string>();
 
     // Modal states
     const [submitModalOpened, setSubmitModalOpened] = useState<boolean>(false);
@@ -145,22 +157,22 @@ function OrderViewPage() {
 
     return (
         <>
-            <Breadcrumbs />
             {/* Top row */}
             {isLoading ? <LoadingSkeletonSingle height={50} /> :
-                <Group mb="30px">
-                    <Button
-                        variant="outline"
-                        leftSection={<IconDeviceFloppy />}
-                        onClick={() => saveNotes({ orderId: data?.submission_id, notes: "test" })}>
-                        Save Private Notes
-                    </Button>
+                <Group justify="flex-end" mb="30px">
+                    <Tooltip position="bottom" label="Save your private notes">
+                        <ActionIcon
+                            className="unify-button-subtle"
+                            onClick={() => saveNotes({ token, orderId: data?.submission_id, notes: editorText })}>
+                            <IconDeviceFloppy size={22} />
+                        </ActionIcon>
+                    </Tooltip>
 
                     <Menu
                         shadow="md"
                         width={200}>
                         <Menu.Target>
-                            <ActionIcon variant="subtle">
+                            <ActionIcon className="unify-button-subtle">
                                 <IconDots />
                             </ActionIcon>
                         </Menu.Target>
@@ -171,6 +183,12 @@ function OrderViewPage() {
                             <Tooltip position="right" label="Submit the order">
                                 <Menu.Item leftSection={<IconCheck size={18} />} onClick={() => setSubmitModalOpened(true)} disabled={data?.status !== 0 ? true : false}>
                                     Submit
+                                </Menu.Item>
+                            </Tooltip>
+
+                            <Tooltip position="right" label="Make order as in progress">
+                                <Menu.Item leftSection={<IconProgress size={18} />} onClick={() => inProgress({ token: token, data: data })} disabled={data?.status !== 0 ? true : false}>
+                                    In Progress
                                 </Menu.Item>
                             </Tooltip>
 
@@ -250,7 +268,7 @@ function OrderViewPage() {
 
             {isLoading ? <LoadingSkeletonSingle height={350} /> :
                 <Stack orientation="column" margin="30px 0px 0px 0px">
-                    <TextEditor content={`${data?.private_notes}`} />
+                    <TextEditor content={`${data?.private_notes}`} setText={setEditorText} />
                 </Stack>
             }
         </>

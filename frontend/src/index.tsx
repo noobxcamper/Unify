@@ -1,10 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import { colorsTuple, createTheme, MantineProvider, Text } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+import { Button, colorsTuple, createTheme, Divider, MantineProvider, Text } from '@mantine/core';
 import { msalInstance } from './utils/MsalAuthHandler';
 import { MsalProvider } from '@azure/msal-react';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
+import './assets/css/globalStyles.css';
 
 // Pages
 import AdminApp from './apps/AdminApp';
@@ -75,27 +79,40 @@ const router = createBrowserRouter([
                 path: 'incidents/new',
                 Component: IncidentReportPage
             },
-            {
-                path: 'finance/orders',
-                Component: OrdersPage
-            },
-            {
-                path: 'finance/orders/:orderId',
-                Component: OrderViewPage
-            }
         ]
     },
     {
         path: '/',
-        element: <ProtectedRoute requiredRoles={["User"]}><UserApp /></ProtectedRoute>
+        element: <ProtectedRoute requiredRoles={["User"]}><UserApp /></ProtectedRoute>,
+        children: [
+            {
+                path: '/',
+                Component: OrdersPage
+            },
+            {
+                path: '/:orderId',
+                Component: OrderViewPage
+            }
+        ]
     }
 ]);
 
 // Override default theme
 const theme = createTheme({
-    colors: {
-        'primary-solid': colorsTuple('#d14025'),
-        'primary-hover': colorsTuple('#ff6a2d')
+    fontFamily: 'Ubuntu, sans-serif',
+    components: {
+        Button: Button.extend({
+            classNames: {
+                root: 'unify-button-filled',
+                label: 'my-label-class',
+                inner: 'my-inner-class',
+            },
+        }),
+        Divider: Divider.extend({
+            classNames: {
+                root: 'unify-divider'
+            }
+        })
     }
 });
 
@@ -105,6 +122,7 @@ const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
     <>
         <MantineProvider theme={theme}>
+            <Notifications />
             <MsalProvider instance={msalInstance}>
                 <RouterProvider router={router} />
             </MsalProvider>

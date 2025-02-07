@@ -12,7 +12,7 @@ function Navigation({ open = false, onClose, children }) {
                     flexDirection: "column",
                     overflow: "hidden",
                     height: "100%",
-                    borderRight: "1px solid #e9e9e9",
+                    borderRight: "1px solid var(--divider-border-color)",
                 }}>
                 {children}
             </Box>
@@ -46,18 +46,13 @@ function ListSection({ sectionTitle = "Section", children }) {
         </>
     )
 }
-
 function ListItemLink({ title = "Link", link = "/", icon }) {
     return (
         <>
             <Tooltip label={title} position="right">
                 <Button
-                    className="LinkButton"
-                    style={{
-                        display: "flex",
-                        borderRadius: "8px",
-                    }}
-                    variant="subtle"
+                    className="unify-button-subtle"
+                    style={{display: "flex", borderRadius: "8px"}}
                     component="a"
                     href={link}
                     leftSection={icon}>

@@ -1,0 +1,90 @@
+/* Define light mode overrides here */
+:root[data-mantine-color-scheme="light"] {
+    /* Body Color */
+    --mantine-color-body: #fff;
+
+    /* Divider Color */
+    --divider-border-color: #e9e9e9;
+
+    /* Normal */
+    --button-filled-bg: #0099ff;
+    --button-light-bg: #0099ff18;
+    /* Hover */
+    --button-filled-bg-hover: #2baaff;
+    --button-light-bg-hover: #0099ff2d;
+    /* Text */
+    --button-filled-color: #fff;
+    --button-light-color: #000;
+    --button-subtle-color: #000;
+    /* Text Hover */
+    --button-filled-color-hover: #fff;
+    --button-subtle-color-hover: #fff;
+    --button-light-color-hover: #000;
+}
+
+/* Define dark mode overrides here */
+:root[data-mantine-color-scheme="dark"] {
+    /* Body Color */
+    --mantine-color-body: #2e2e2e;
+
+    /* Divider Color */
+    --divider-border-color: #444444;
+
+    /* Normal */
+    --button-filled-bg: #ee8f00;
+    --button-light-bg: #ee8f0038;
+    /* Hover */
+    --button-filled-bg-hover: #ff9901;
+    --button-light-bg-hover: #ee8f0049;
+    /* Text */
+    --button-filled-color: #000;
+    --button-light-color: #fff;
+    --button-subtle-color: #fff;
+    /* Text Hover */
+    --button-filled-color-hover: #000;
+    --button-subtle-color-hover: #000;
+    --button-light-color-hover: #fff;
+}
+
+/* Override component styles here */
+.unify-button-filled {
+    font-weight: 400;
+    color: var(--button-filled-color);
+    background-color: var(--button-filled-bg);
+    transition: all 0.1s;
+}
+
+.unify-button-filled:hover {
+    color: var(--button-filled-color-hover);
+    background-color: var(--button-filled-bg-hover);
+}
+
+.unify-button-subtle,
+.unify-button-outline {
+    color: var(--button-subtle-color);
+    background-color: transparent;
+}
+
+.unify-button-outline {
+    border: 1px solid var(--button-filled-bg);
+}
+
+.unify-button-subtle:hover,
+.unify-button-outline:hover {
+    color: var(--button-subtle-color-hover);
+    background-color: var(--button-filled-bg);
+}
+
+.unify-button-light {
+    color: var(--button-light-color);
+    background-color: var(--button-light-bg);
+}
+
+.unify-button-light:hover {
+    color: var(--button-light-color-hover);
+    background-color: var(--button-light-bg-hover);
+}
+
+.unify-divider {
+    border-color: var(--divider-border-color);
+}

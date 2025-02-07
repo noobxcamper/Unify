@@ -1,9 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
-import { firstCharacterUppercase } from "../utils/utils";
+import { firstCharacterUppercase } from "../utils/utilities";
 import { Box, Link } from "@mui/material";
-import { IconArrowLeft } from "@tabler/icons-react";
-import { Button } from "@mantine/core";
 import { v4 as uuidv4 } from 'uuid';
 
 function Breadcrumbs() {

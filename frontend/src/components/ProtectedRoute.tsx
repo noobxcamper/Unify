@@ -5,7 +5,7 @@ import { AccountInfo, IdTokenClaims } from "@azure/msal-browser";
 import { Box, Button, Paper, Text } from "@mantine/core";
 import { getIdTokenSilently, getGraphTokenSilently, isAdmin, logoutHandler } from "../utils/MsalAuthHandler";
 import { InvalidTokenError } from "jwt-decode";
-import { IconChevronLeft, IconLogout } from "@tabler/icons-react";
+import { IconChevronLeft, IconLogout2 } from "@tabler/icons-react";
 import LoadingOverlay from "./LoadingOverlay";
 
 function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRoles: string[] }) {
@@ -104,7 +104,7 @@ function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRo
                     justifyContent: "center",
                     padding: "64px",
                     borderRadius: "8px",
-                    border: "1px solid #e9e9e9"
+                    border: "1px solid var(--divider-border-color)"
                 }}>
                     <Text mb={"lg"} size={"26px"} fw={600}>You do not have access to this page.</Text>
                     <Text mb={"lg"}>If you believe this to be a mistake, please contact your IT administrator.</Text>
@@ -113,7 +113,7 @@ function ProtectedRoute({ children, requiredRoles }: { children: any, requiredRo
                         display: "inline-flex"
                     }}>
                         <Button mr={"md"} leftSection={<IconChevronLeft />} onClick={() => navigate(-1)}>Previous Page</Button>
-                        <Button leftSection={<IconLogout />} onClick={logoutHandler}>Logout</Button>
+                        <Button leftSection={<IconLogout2 />} onClick={logoutHandler}>Logout</Button>
                     </Box>
                 </Paper>
             </Box>

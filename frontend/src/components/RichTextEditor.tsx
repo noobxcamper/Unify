@@ -8,10 +8,8 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import Placeholder from '@tiptap/extension-placeholder';
 import '@mantine/tiptap/styles.css';
-import { useEffect } from 'react';
 
-function TextEditor({content = ""}) {
-
+function TextEditor({content = "", setText}) {
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -23,11 +21,15 @@ function TextEditor({content = ""}) {
             Placeholder.configure({placeholder: "Private notes, only visible to you and your team"}),
             TextAlign.configure({ types: ['heading', 'paragraph']}),
         ],
-        content: content
+        content: content,
+        onUpdate({ editor }) {
+            // Set the state handler function to the HTML of the editor
+            setText(editor.getHTML());
+        }
     });
 
     return (
-        <RichTextEditor editor={editor} style={{ width: "100%", height: "350px" }}>
+        <RichTextEditor editor={editor} style={{ width: "100%" }} onChange={() => console.log("changed")}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>
                 <RichTextEditor.ControlsGroup>
                     <RichTextEditor.Bold />

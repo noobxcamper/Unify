@@ -2,10 +2,9 @@ import React from "react";
 import Table from "../components/Table"
 import { GridColDef, GridEventListener } from "@mui/x-data-grid"
 import { useNavigate } from "react-router";
-import { formatPrice } from "../utils/utils";
+import { formatPrice } from "../utils/utilities";
 import { getOrderStatusText } from "../constants/enums";
 import { TableItemPill } from "../components/TableItems";
-import Breadcrumbs from "../components/Breadcrumbs";
 
 function OrdersTable() {
     const columns: GridColDef[] = [
@@ -27,7 +26,6 @@ function OrdersTable() {
 
     return (
         <>
-            <Breadcrumbs />
             <Table apiUrl="/orders/all" columns={columns} eventHandler={rowClick} />
         </>
     )

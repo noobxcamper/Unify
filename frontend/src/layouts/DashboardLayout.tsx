@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Grid2 } from "@mui/material";
-import { Box, ActionIcon, Divider, Button, Text } from "@mantine/core";
+import { Box, ActionIcon, Divider, Button, Text, Group } from "@mantine/core";
 import { Navigation, ListSection, ListItemLink } from "../components/Navigation";
 import AccountMenuButton from "../components/AccountMenuButton";
 import BrandLogo from "../assets/img/brand.png"
@@ -10,7 +10,6 @@ import {
     IconListCheck,
     IconShieldCog,
     IconSettings,
-    IconCreditCard,
     IconUsers,
     IconTicket,
     IconLibrary,
@@ -34,36 +33,30 @@ function Branding({ title = "App", icon }) {
 function PageHeader({ onMenuClick }) {
     return (
         <>
-            <Box px="16px" style={{ height: 58, display: "inline-flex", width: "100%", alignItems: "center", borderBottom: "1px solid #e9e9e9" }}>
+            <Box px="16px" style={{ height: 58, display: "inline-flex", width: "100%", alignItems: "center", borderBottom: "1px solid var(--divider-border-color)" }}>
                 <ActionIcon
+                    className="unify-button-subtle"
                     hiddenFrom="xl"
-                    variant="subtle"
-                    onClick={onMenuClick}
-                    style={{
-                        color: "black",
-                    }}>
+                    onClick={onMenuClick}>
                     <IconMenu2 size={22} />
                 </ActionIcon>
 
                 <Box style={{ display: "flex", width: "100%", justifyContent: "end", alignItems: "center" }}>
-                    <Button
-                        component="a"
-                        href="/"
-                        target="_blank"
-                        mr="8px"
-                        variant="light"
-                        leftSection={<IconExternalLink />}>
-                        Client Portal
-                    </Button>
-                    <ActionIcon
-                        variant="subtle"
-                        style={{
-                            color: "black",
-                        }}>
-                        <IconBell size={22} />
-                    </ActionIcon>
+                    <Group>
+                        <Button
+                            className="unify-button-light"
+                            mr="8px"
+                            component="a"
+                            href="/"
+                            leftSection={<IconExternalLink size={16} />}>
+                            Client Portal
+                        </Button>
+                        <ActionIcon className="unify-button-subtle">
+                            <IconBell size={22} />
+                        </ActionIcon>
 
-                    <AccountMenuButton />
+                        <AccountMenuButton />
+                    </Group>
                 </Box>
             </Box>
         </>
@@ -110,10 +103,6 @@ function Dashboard({ children }) {
                         <ListSection sectionTitle="Incident Response">
                             <ListItemLink title="Reports" icon={<IconClipboardText />} />
                             <ListItemLink title="Plan" link="/admin/incidents/plan" icon={<IconListCheck />} />
-                        </ListSection>
-                        <Divider my={"sm"} />
-                        <ListSection sectionTitle="Finance">
-                            <ListItemLink title="Orders" link="/admin/finance/orders" icon={<IconCreditCard />} />
                         </ListSection>
                         <Divider my={"sm"} />
                         <ListSection sectionTitle="Management">
