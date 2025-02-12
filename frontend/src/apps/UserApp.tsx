@@ -17,9 +17,9 @@ function UserApp() {
 
             <Divider my={"lg"}/>
 
-            <Container>
+            {/* <Container> */}
                 <Outlet />
-            </Container>
+            {/* </Container> */}
         </Box>
     )
 }

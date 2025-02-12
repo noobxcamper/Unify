@@ -138,7 +138,7 @@ const loginSuccessRedirect = (fallbackUrl: string) => {
     window.location.href = redirectParam ?? fallbackUrl;
 }
 
-const loginHandler = () => {
+const loginHandler = async () => {
     // Login and redirect using the api scopes
     msalInstance.loginPopup(apiScopes)
         .catch(error => {
@@ -147,15 +147,16 @@ const loginHandler = () => {
 }
 
 // Logout handler for signing out, uses the current active account.
-const logoutHandler = () => {
-    msalInstance.logoutPopup({ account: msalInstance.getActiveAccount() }).then(() => {
-        // Clear the tokens
-        localStorage.removeItem(GRAPH_ACCESS_TOKEN);
-        localStorage.removeItem(API_ACCESS_TOKEN);
+const logoutHandler = async () => {
+    msalInstance.logoutPopup({ account: msalInstance.getActiveAccount() })
+        .then(() => {
+            // Redirect to login page
+            window.location.href = "/login";
 
-        // Redirect to login page
-        window.location.href = "/login";
-    });
+            // Clear the tokens
+            localStorage.removeItem(GRAPH_ACCESS_TOKEN);
+            localStorage.removeItem(API_ACCESS_TOKEN);
+        });
 }
 
 /**
@@ -205,7 +206,7 @@ msalInstance.addEventCallback((event) => {
             setTimeout(() => {
                 loginSuccessRedirect("/admin/dashboard");
             }, 300);
-        } 
+        }
         else {
             loginSuccessRedirect("/");
         }

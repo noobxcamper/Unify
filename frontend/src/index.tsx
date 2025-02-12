@@ -104,8 +104,6 @@ const theme = createTheme({
         Button: Button.extend({
             classNames: {
                 root: 'unify-button-filled',
-                label: 'my-label-class',
-                inner: 'my-inner-class',
             },
         }),
         Divider: Divider.extend({

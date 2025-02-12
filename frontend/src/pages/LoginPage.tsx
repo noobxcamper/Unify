@@ -1,10 +1,19 @@
 import React from "react";
-import { Typography } from "@mui/material";
-import { Box, Paper, Button } from "@mantine/core";
+import { Box, Paper, Button, Text, ActionIcon, useMantineColorScheme } from "@mantine/core";
 import { loginHandler } from "../utils/MsalAuthHandler";
-import { IconBrandWindowsFilled } from "@tabler/icons-react";
+import { IconBrandWindowsFilled, IconMoon, IconSun } from "@tabler/icons-react";
 
 function Login() {
+    const { colorScheme, setColorScheme } = useMantineColorScheme();
+
+    const colorSchemeToggle = () => {
+        if (colorScheme === 'dark') {
+            setColorScheme('light');
+        } else {
+            setColorScheme('dark');
+        }
+    };
+
     return (
         <>
             <Box style={{
@@ -19,15 +28,18 @@ function Login() {
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    padding: "24px",
+                    padding: "48px",
                     borderRadius: "16px",
                     border: "1px solid var(--divider-border-color)"
                 }}>
-                    <Typography fontSize={38}>Unify</Typography>
-                    <Typography fontSize={14} mb={4}>BETA</Typography>
-                    <Button variant="contained" onClick={loginHandler} leftSection={<IconBrandWindowsFilled />}>Sign in with Microsoft</Button>
-                    <Typography fontSize={14} mt={2} color="gray">Please contact your IT administrator to report any issues</Typography>
+                    <Text size="38px">Unify</Text>
+                    <Text size="14px">BETA</Text>
+                    <Button my="32px" onClick={loginHandler} leftSection={<IconBrandWindowsFilled />}>Sign in with Microsoft</Button>
+                    <Text size="14px" c="gray">Please contact your IT administrator to report any issues</Text>
                 </Paper>
+                <ActionIcon className="unify-button-subtle" onClick={colorSchemeToggle}>
+                    {colorScheme === 'dark' ? <IconSun /> : <IconMoon />}
+                </ActionIcon>
             </Box>
         </>
     )

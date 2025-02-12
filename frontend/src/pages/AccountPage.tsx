@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAccount } from "@azure/msal-react";
-import { graphAPI } from "../utils/api";
+import { graphAPI, queryGraphAPI } from "../utils/api";
 import { GRAPH_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
 import { LoadingOverlay, Paper, Tabs, Text } from "@mantine/core";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
@@ -9,7 +9,8 @@ import Breadcrumbs from "../components/Breadcrumbs";
 function GraphTest() {
     const account = useAccount();
     const [loading, setLoading] = useState<boolean>(false);
-    const [users, setUsers] = useState<[]>();
+    const [users, setUsers] = useState<any[]>();
+    const [data, setData] = useState<any[]>();
     const paginationModel = { page: 0, pageSize: 30 };
 
     const columns: GridColDef[] = [
@@ -18,13 +19,12 @@ function GraphTest() {
         { field: 'id', headerName: 'User ID', flex: 1, headerClassName: "mui-table-header" },
     ];
 
-    const getUserGroups = () => {
+    const getUserGroups = async () => {
         setLoading(true);
 
-        graphAPI(localStorage.getItem(GRAPH_ACCESS_TOKEN) ?? "None").get("/users").then((response) => {
-            setUsers(response.data.value);
-            setLoading(false);
-        });
+        const result = await queryGraphAPI(localStorage.getItem(GRAPH_ACCESS_TOKEN) ?? "None", "/users");
+        setUsers(result);
+        setLoading(false);
     };
 
     useEffect(() => {

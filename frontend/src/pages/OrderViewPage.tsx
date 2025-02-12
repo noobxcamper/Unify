@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { ActionIcon, Button, Group, Input, Menu, Modal, Text, Textarea, Tooltip } from "@mantine/core";
+import { useNavigate, useParams } from "react-router";
+import { ActionIcon, Box, Button, Container, Group, Input, Menu, Modal, Text, Textarea, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconBell, IconBrandTeams, IconCheck, IconDeviceFloppy, IconDots, IconExternalLink, IconMail, IconProgress, IconTruck, IconX } from "@tabler/icons-react";
+import { IconArrowLeft, IconBell, IconBrandTeams, IconCheck, IconDeviceFloppy, IconDots, IconExternalLink, IconMail, IconProgress, IconTruck, IconX } from "@tabler/icons-react";
 import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
 import { formatPrice } from "../utils/utilities";
@@ -133,6 +133,7 @@ const saveNotes = ({ token, orderId, notes }) => {
 
 function OrderViewPage() {
     let { orderId } = useParams();
+    const navigate = useNavigate();
     const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<IOrder>();
@@ -156,10 +157,21 @@ function OrderViewPage() {
     }, []);
 
     return (
-        <>
+        <Container>
             {/* Top row */}
             {isLoading ? <LoadingSkeletonSingle height={50} /> :
-                <Group justify="flex-end" mb="30px">
+                <Group justify="flex-start" mb="30px">
+                    <Tooltip position="bottom" label="Go back">
+                        <ActionIcon
+                            style={{
+                                marginRight: "auto"
+                            }}
+                            className="unify-button-subtle"
+                            onClick={() => navigate(-1)}>
+                            <IconArrowLeft size={22} />
+                        </ActionIcon>
+                    </Tooltip>
+
                     <Tooltip position="bottom" label="Save your private notes">
                         <ActionIcon
                             className="unify-button-subtle"
@@ -181,19 +193,19 @@ function OrderViewPage() {
                             <Menu.Label>Order Actions</Menu.Label>
 
                             <Tooltip position="right" label="Submit the order">
-                                <Menu.Item leftSection={<IconCheck size={18} />} onClick={() => setSubmitModalOpened(true)} disabled={data?.status !== 0 ? true : false}>
+                                <Menu.Item leftSection={<IconCheck size={18} />} onClick={() => setSubmitModalOpened(true)} disabled={data?.status !== 0 && data?.status !== 2 ? true : false}>
                                     Submit
                                 </Menu.Item>
                             </Tooltip>
 
                             <Tooltip position="right" label="Make order as in progress">
-                                <Menu.Item leftSection={<IconProgress size={18} />} onClick={() => inProgress({ token: token, data: data })} disabled={data?.status !== 0 ? true : false}>
+                                <Menu.Item leftSection={<IconProgress size={18} />} onClick={() => inProgress({ token: token, data: data })} disabled={data?.status !== 0 && data?.status !== 2 ? true : false}>
                                     In Progress
                                 </Menu.Item>
                             </Tooltip>
 
                             <Tooltip position="right" label="Cancel the order">
-                                <Menu.Item leftSection={<IconX size={18} />} onClick={() => setCancelModalOpened(true)} disabled={data?.status !== 0 ? true : false}>
+                                <Menu.Item leftSection={<IconX size={18} />} onClick={() => setCancelModalOpened(true)} disabled={data?.status !== 0 && data?.status !== 2 ? true : false}>
                                     Cancel
                                 </Menu.Item>
                             </Tooltip>
@@ -230,8 +242,8 @@ function OrderViewPage() {
                                 </Menu.Item>
                             </Tooltip>
 
-                            <Tooltip position="right" label="Send user a notification of order completion or cancellation">
-                                <Menu.Item leftSection={<IconBell size={18} />} onClick={() => powerAutomateApi(data)}>
+                            <Tooltip position="right" label="Send user a notification of order status">
+                                <Menu.Item leftSection={<IconBell size={18} />} onClick={() => powerAutomateApi(data)} disabled={data?.status !== 1 && data?.status !== 3 ? true : false}>
                                     Send Notification
                                 </Menu.Item>
                             </Tooltip>
@@ -271,7 +283,7 @@ function OrderViewPage() {
                     <TextEditor content={`${data?.private_notes}`} setText={setEditorText} />
                 </Stack>
             }
-        </>
+        </Container>
     )
 }
 
