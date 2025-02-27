@@ -28,6 +28,7 @@ class Order(models.Model):
     shipping_address = models.CharField(max_length=100, blank=True, default='No shipping address')
     hyperlink = models.CharField(max_length=500, default='No hyperlink')
     tracking_url = models.CharField(max_length=500, default='No tracking url')
+    invoice_uploaded = models.BooleanField(default=False)
     private_notes = models.CharField(max_length=5000, blank=True)
 
 class ExpensiveOrder(models.Model):

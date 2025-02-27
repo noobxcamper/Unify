@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { ActionIcon, Box, Button, Container, Group, Input, Menu, Modal, Text, Textarea, Tooltip } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { IconArrowLeft, IconBell, IconBrandTeams, IconCheck, IconDeviceFloppy, IconDots, IconExternalLink, IconMail, IconPhoto, IconProgress, IconTruck, IconUpload, IconX } from "@tabler/icons-react";
+import { ActionIcon, Box, Button, Container, Group, Text, Tooltip } from "@mantine/core";
+import { IconArrowLeft, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
 import { formatPrice } from "../utils/utilities";
-import { backendAPI, powerAutomateApi } from "../utils/api";
+import { backendAPI } from "../utils/api";
 import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
 import Stack from "../components/Stack";
-import TextEditor from "../components/RichTextEditor";
 import { Dropzone, FileWithPath, PDF_MIME_TYPE } from "@mantine/dropzone";
 import { useAccount } from "@azure/msal-react";
 import axios from "axios";
@@ -34,7 +32,7 @@ interface IOrder {
     private_notes: string
 }
 
-function MyOrdersPage() {
+function UserOrdersPage() {
     let { orderId } = useParams();
     const account = useAccount();
     const navigate = useNavigate();
@@ -61,6 +59,8 @@ function MyOrdersPage() {
                         }
                     })
                 });
+
+            backendAPI(token).patch(`/orders/${orderId}`, { "invoice_uploaded": true })
         } else {
             console.log("No file has been selected, please select a file first");
         }
@@ -160,4 +160,4 @@ function MyOrdersPage() {
     )
 }
 
-export default MyOrdersPage;
+export default UserOrdersPage;

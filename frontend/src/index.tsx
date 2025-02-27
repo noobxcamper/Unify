@@ -26,9 +26,8 @@ import Http404Page from './pages/Http404Page'
 import DevelopmentPage from './pages/DevelopmentPage';
 import TicketsPage from './pages/TicketsPage';
 import AccountPage from './pages/AccountPage';
-import OrdersFormPage from './pages/OrdersFormPage';
 import UserPortalPage from './pages/UserPortalPage';
-import MyOrdersPage from './pages/MyOrdersPage';
+import UserOrdersPage from './pages/UserOrdersPage';
 
 // Place pages here for routing
 const router = createBrowserRouter([
@@ -95,12 +94,8 @@ const router = createBrowserRouter([
                 Component: UserPortalPage
             },
             {
-                path: '/:orderId',
-                Component: OrderViewPage
-            },
-            {
                 path: '/my_orders/:orderId',
-                Component: MyOrdersPage
+                Component: UserOrdersPage
             },
         ]
     },
@@ -109,9 +104,13 @@ const router = createBrowserRouter([
         element: <ProtectedRoute requiredRoles={["Finance"]}><UserApp /></ProtectedRoute>,
         children: [
             {
-                path: 'purchasing',
-                Component: OrdersPage
-            }
+                path: 'orders',
+                Component: OrdersPage,
+            },
+            {
+                path: 'orders/:orderId',
+                Component: OrderViewPage
+            },
         ]
     }
 ]);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { ActionIcon, Box, Button, Container, Group, Input, Menu, Modal, Text, Textarea, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconArrowLeft, IconBell, IconBrandTeams, IconCheck, IconDeviceFloppy, IconDots, IconExternalLink, IconMail, IconProgress, IconTruck, IconX } from "@tabler/icons-react";
+import { IconArrowLeft, IconBell, IconBrandTeams, IconCheck, IconDeviceFloppy, IconDots, IconExternalLink, IconMail, IconProgress, IconReceipt, IconTruck, IconX } from "@tabler/icons-react";
 import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
 import { formatPrice } from "../utils/utilities";
@@ -28,6 +28,7 @@ interface IOrder {
     shipping_address: string,
     hyperlink: string,
     tracking_url: string,
+    invoice_uploaded: boolean,
     private_notes: string
 }
 
@@ -143,13 +144,26 @@ function OrderViewPage() {
     const [submitModalOpened, setSubmitModalOpened] = useState<boolean>(false);
     const [cancelModalOpened, setCancelModalOpened] = useState<boolean>(false);
 
+    // Invoice download URL state
+    const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+
     useEffect(() => {
         setIsLoading(true);
 
+        // Get order
         backendAPI(token).get(`/orders/${orderId}`)
             .then(response => {
                 setData(response.data);
                 setIsLoading(false);
+
+                // Get invoice URL if available
+                backendAPI(token).get(`/files/download?filename=PO${response.data.submission_id}-final-invoice.pdf`)
+                    .then((response) => {
+                        setInvoiceUrl(response.data.download_url);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
             })
             .catch((error) => {
                 console.error(error);
@@ -223,6 +237,12 @@ function OrderViewPage() {
                             <Tooltip position="right" label="Opens tracking page in a new tab">
                                 <Menu.Item component="a" leftSection={<IconTruck size={18} />} href={data?.tracking_url} target="_blank" disabled={data?.tracking_url !== "No tracking url" ? false : true}>
                                     Tracking Page
+                                </Menu.Item>
+                            </Tooltip>
+
+                            <Tooltip position="right" label="Download invoice for this order">
+                                <Menu.Item component="a" leftSection={<IconReceipt size={18} />} href={invoiceUrl ?? ""} target="_blank" download disabled={data?.invoice_uploaded !== false ? false : true}>
+                                    Download Invoice
                                 </Menu.Item>
                             </Tooltip>
 
