@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const backendAPI = (token: string) => axios.create({
-    baseURL: "https://api.hazemspersonalsite.ca/api",
+    baseURL: "http://192.168.50.200:36594/api",
     headers: {
         Authorization: `Bearer ${token}`,
     },
@@ -14,10 +14,17 @@ const graphAPI = (token: string) => axios.create({
     },
 });
 
+const sharepointApi = (token: string) => axios.create({
+    baseURL: "https://experiorheadoffice.sharepoint.com",
+    headers: {
+        Authorization: `Bearer ${token}`,
+    }
+});
+
 const powerAutomateApi = (data: any) => axios.post(
     "https://prod-11.canadacentral.logic.azure.com:443/workflows/48766b54ca45421199515c548aa83d49/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=pUcR_fQWCgKYv74eCGH2UsLpdSPdug9e1SrvrQmy9aA",
     data
-)
+);
 
 /**
  * This will query the specified Graph API dataset, and handle any additional datasets received recursively.
@@ -54,5 +61,6 @@ export {
     backendAPI,
     graphAPI,
     queryGraphAPI,
+    sharepointApi,
     powerAutomateApi
 }

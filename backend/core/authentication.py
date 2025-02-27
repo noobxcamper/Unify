@@ -1,11 +1,10 @@
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from jwt.algorithms import RSAAlgorithm
+from backend.settings import AZURE_TENANT_ID, AZURE_CLIENT_ID
 import jwt
 import requests
 
-AZURE_TENANT_ID = "829c3abd-b89c-4d79-a1fb-6d8644f2fb53"
-AZURE_CLIENT_ID = "884883ce-6358-4dc6-b166-178c78620a9a"  # API Application (client) ID
 KEYS_URL = f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/discovery/v2.0/keys"
 
 class ExperiorUser:

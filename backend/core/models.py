@@ -29,3 +29,8 @@ class Order(models.Model):
     hyperlink = models.CharField(max_length=500, default='No hyperlink')
     tracking_url = models.CharField(max_length=500, default='No tracking url')
     private_notes = models.CharField(max_length=5000, blank=True)
+
+class ExpensiveOrder(models.Model):
+    submission_id = models.IntegerField(default=-1)
+    purchase_order = models.CharField(max_length=300)
+    invoice = models.CharField(max_length=300)

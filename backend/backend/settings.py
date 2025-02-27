@@ -24,6 +24,11 @@ load_dotenv(find_dotenv())
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 SECRET_KEY = environ['SECRET_KEY']
+AZURE_TENANT_ID = environ['AZURE_TENANT_ID']
+AZURE_CLIENT_ID = environ['AZURE_CLIENT_ID']
+AZURE_STORAGE_CONNECTION_STRING = environ['AZURE_STORAGE_CONNECTION_STRING']
+AZURE_STORAGE_CONNECTION_KEY = environ['AZURE_STORAGE_CONNECTION_KEY']
+AZURE_STORAGE_CONTAINER = environ['AZURE_STORAGE_CONTAINER']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

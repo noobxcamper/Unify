@@ -8,6 +8,8 @@ import { MsalProvider } from '@azure/msal-react';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
+import '@mantine/dropzone/styles.css';
 import './assets/css/globalStyles.css';
 
 // Pages
@@ -24,6 +26,9 @@ import Http404Page from './pages/Http404Page'
 import DevelopmentPage from './pages/DevelopmentPage';
 import TicketsPage from './pages/TicketsPage';
 import AccountPage from './pages/AccountPage';
+import OrdersFormPage from './pages/OrdersFormPage';
+import UserPortalPage from './pages/UserPortalPage';
+import MyOrdersPage from './pages/MyOrdersPage';
 
 // Place pages here for routing
 const router = createBrowserRouter([
@@ -87,11 +92,25 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/',
-                Component: OrdersPage
+                Component: UserPortalPage
             },
             {
                 path: '/:orderId',
                 Component: OrderViewPage
+            },
+            {
+                path: '/my_orders/:orderId',
+                Component: MyOrdersPage
+            },
+        ]
+    },
+    {
+        path: '/finance',
+        element: <ProtectedRoute requiredRoles={["Finance"]}><UserApp /></ProtectedRoute>,
+        children: [
+            {
+                path: 'purchasing',
+                Component: OrdersPage
             }
         ]
     }

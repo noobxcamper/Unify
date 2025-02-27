@@ -1,7 +1,6 @@
 import { AuthenticationResult, EventType, IdTokenClaims, PublicClientApplication } from "@azure/msal-browser";
 import { msalConfig } from "../settings/authConfig";
 
-
 /**
  * Roles here will have access to the Graph API. These roles here are used to determine whether the logged in user should get Graph API access upon refreshing the token.
  */
