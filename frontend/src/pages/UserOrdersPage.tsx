@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { ActionIcon, Box, Button, Container, Group, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, Button, Container, Group, Loader, LoadingOverlay, Notification, Text, Tooltip } from "@mantine/core";
 import { IconArrowLeft, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
@@ -11,6 +11,7 @@ import Stack from "../components/Stack";
 import { Dropzone, FileWithPath, PDF_MIME_TYPE } from "@mantine/dropzone";
 import { useAccount } from "@azure/msal-react";
 import axios from "axios";
+import { notifications } from "@mantine/notifications";
 
 interface IOrder {
     id: number,
@@ -39,13 +40,14 @@ function UserOrdersPage() {
     const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
     const [data, setData] = useState<IOrder>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isUploading, setIsUploading] = useState<boolean>(false);
     const [uploadedFile, setUploadedFile] = useState<FileWithPath | null>(null);
 
     const uploadFile = () => {
         if (uploadedFile !== null) {
             backendAPI(token).get(`/files/upload?filename=PO${data?.submission_id}-final-invoice.pdf`)
                 .then((response) => {
-                    console.log(response.data.upload_url);
+                    setIsUploading(true);
 
                     axios.put(response.data.upload_url, uploadedFile, {
                         headers: {
@@ -55,14 +57,25 @@ function UserOrdersPage() {
                             const progress = Math.round(
                                 (progressEvent.loaded * 100) / (progressEvent.total || 1)
                             );
-                            console.log(`Uploading: ${progress}%`);
+
+                            if (progress === 100) {
+                                setIsUploading(false);
+
+                                notifications.show({
+                                    title: "File Upload",
+                                    message: "Invoice has been uploaded successfully!"
+                                });
+                            }
                         }
                     })
                 });
 
             backendAPI(token).patch(`/orders/${orderId}`, { "invoice_uploaded": true })
         } else {
-            console.log("No file has been selected, please select a file first");
+            notifications.show({
+                title: "File Upload",
+                message: "Please select a file before uploading."
+            });
         }
     };
 
@@ -152,7 +165,16 @@ function UserOrdersPage() {
 
                     <Group my="md">
                         <Text>{uploadedFile?.name ?? "No file selected"}</Text>
-                        <Button leftSection={<IconUpload size={20} />} onClick={uploadFile}>Upload File</Button>
+                        <Button
+                            leftSection={isUploading ? <Loader size={18} color="white" /> : <IconUpload size={18} />}
+                            onClick={uploadFile}>
+                            Upload File
+                        </Button>
+                        <Button
+                            leftSection={<IconX size={18} />}
+                            onClick={() => setUploadedFile(null)}>
+                            Clear
+                        </Button>
                     </Group>
                 </Box>
             }

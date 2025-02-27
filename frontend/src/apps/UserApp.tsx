@@ -1,6 +1,6 @@
 import React from "react";
-import { Container, Box, Button, Text, Divider } from "@mantine/core";
-import { IconLogout, IconLogout2 } from "@tabler/icons-react";
+import { Box, Button, Text, Divider } from "@mantine/core";
+import { IconLogout2 } from "@tabler/icons-react";
 import { logoutHandler } from "../utils/MsalAuthHandler";
 import { useAccount } from "@azure/msal-react";
 import { Outlet } from "react-router";
@@ -17,9 +17,7 @@ function UserApp() {
 
             <Divider my={"lg"}/>
 
-            {/* <Container> */}
-                <Outlet />
-            {/* </Container> */}
+            <Outlet />
         </Box>
     )
 }
