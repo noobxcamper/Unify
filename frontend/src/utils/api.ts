@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const backendAPI = (token: string) => axios.create({
-    baseURL: "https://api.hazemspersonalsite.ca/api",
+    baseURL: "http://192.168.50.200:36594/api",
     headers: {
         Authorization: `Bearer ${token}`,
     },

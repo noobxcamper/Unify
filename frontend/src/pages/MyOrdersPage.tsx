@@ -51,7 +51,6 @@ function MyOrdersPage() {
 
                     axios.put(response.data.upload_url, uploadedFile, {
                         headers: {
-                            Authorization: `Bearer ${token}`,
                             "x-ms-blob-type": "BlockBlob"
                         },
                         onUploadProgress: (progressEvent) => {
