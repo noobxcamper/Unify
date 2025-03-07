@@ -30,6 +30,7 @@ interface IOrder {
     shipping_address: string,
     hyperlink: string,
     tracking_url: string,
+    invoice_uploaded: boolean,
     private_notes: string
 }
 
@@ -134,7 +135,9 @@ function UserOrdersPage() {
             }
 
             {isLoading ? <LoadingSkeletonSingle height={350} /> :
-                <Box>
+                <Box style={{
+                    display: data?.invoice_uploaded ? "none" : "block",
+                }}>
                     <Dropzone
                         onDrop={(files) => setUploadedFile(files[0])}
                         onReject={(files) => console.log('rejected files: ' + files)}
