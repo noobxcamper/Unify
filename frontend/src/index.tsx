@@ -2,14 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { Notifications } from '@mantine/notifications';
-import { Button, colorsTuple, createTheme, Divider, MantineProvider, Text } from '@mantine/core';
+import { ActionIcon, Button, colorsTuple, createTheme, Divider, MantineProvider, Text } from '@mantine/core';
 import { msalInstance } from './utils/MsalAuthHandler';
 import { MsalProvider } from '@azure/msal-react';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { pdfjs } from 'react-pdf';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/dropzone/styles.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
 import './assets/css/globalStyles.css';
 
 // Pages
@@ -18,6 +21,7 @@ import UserApp from './apps/UserApp';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import OrderViewPage from './pages/OrderViewPage';
+import FinanceOrderViewPage from './pages/FinanceOrderViewPage';
 import IncidentsPage from './pages/IncidentsPage';
 import IncidentReportPage from './pages/IncidentReportPage'
 import IncidentPlanPage from './pages/IncidentPlanPage'
@@ -109,7 +113,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'orders/:orderId',
-                Component: OrderViewPage
+                Component: FinanceOrderViewPage
             },
         ]
     }
@@ -124,6 +128,11 @@ const theme = createTheme({
                 root: 'unify-button-filled',
             },
         }),
+        ActionIcon: ActionIcon.extend({
+            classNames: {
+                root: 'unify-button-filled',
+            }
+        }),
         Divider: Divider.extend({
             classNames: {
                 root: 'unify-divider'
@@ -131,9 +140,11 @@ const theme = createTheme({
         })
     }
 });
-
 // App Root
 const root = ReactDOM.createRoot(document.getElementById('root')!);
+
+// Set the PDF worker
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs";
 
 root.render(
     <>

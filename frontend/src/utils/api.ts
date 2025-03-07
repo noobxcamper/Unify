@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const backendAPI = (token: string) => axios.create({
-    baseURL: "https://api.hazemspersonalsite.ca/api",
+    baseURL: "https://unify.experiorheadoffice.ca/api",
     headers: {
         Authorization: `Bearer ${token}`,
     },
@@ -12,13 +12,6 @@ const graphAPI = (token: string) => axios.create({
     headers: {
         Authorization: `Bearer ${token}`,
     },
-});
-
-const sharepointApi = (token: string) => axios.create({
-    baseURL: "https://experiorheadoffice.sharepoint.com",
-    headers: {
-        Authorization: `Bearer ${token}`,
-    }
 });
 
 const powerAutomateApi = (data: any) => axios.post(
@@ -61,6 +54,5 @@ export {
     backendAPI,
     graphAPI,
     queryGraphAPI,
-    sharepointApi,
     powerAutomateApi
 }
