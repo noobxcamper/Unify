@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useNavigate, useParams } from "react-router";
-import { ActionIcon, Box, Container, Group, Menu, MenuDivider, Modal, Tooltip, Text } from "@mantine/core";
+import { ActionIcon, Box, Container, Group, Menu, MenuDivider, Modal, Tooltip, Text, Button, Loader } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconArrowLeft, IconBell, IconBrandTeams, IconDeviceFloppy, IconDots, IconEye, IconMail, IconReceipt } from "@tabler/icons-react";
+import { IconArrowLeft, IconBrandTeams, IconDeviceFloppy, IconDots, IconEye, IconMail, IconPhoto, IconReceipt, IconUpload, IconX } from "@tabler/icons-react";
 import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
 import { formatPrice } from "../utils/utilities";
-import { backendAPI, powerAutomateApi } from "../utils/api";
+import { backendAPI } from "../utils/api";
 import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
 import Stack from "../components/Stack";
 import TextEditor from "../components/RichTextEditor";
 import { useDisclosure } from "@mantine/hooks";
 import PDFViewer from "../components/PDFViewer";
+import { Dropzone, FileWithPath, PDF_MIME_TYPE } from "@mantine/dropzone";
 
 interface IOrder {
     id: number,
@@ -34,17 +36,6 @@ interface IOrder {
     private_notes: string
 }
 
-const saveNotes = ({ token, orderId, notes }) => {
-    // Patch the order with the new private notes
-    backendAPI(token).patch(`/orders/${orderId}`, { "private_notes": notes }).then(() => {
-        // Show notification
-        notifications.show({
-            title: "Private Notes Saved",
-            message: "Your private notes have been successfully saved for this order!",
-        })
-    });
-};
-
 function FinanceOrderViewPage() {
     let { orderId } = useParams();
     const navigate = useNavigate();
@@ -53,7 +44,61 @@ function FinanceOrderViewPage() {
     const [data, setData] = useState<IOrder>();
     const [editorText, setEditorText] = useState<string>();
     const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
-    const [previewOpened, {open, close}] = useDisclosure(false);
+    const [previewOpened, { open, close }] = useDisclosure(false);
+    const [isUploading, setIsUploading] = useState<boolean>(false);
+    const [uploadedFile, setUploadedFile] = useState<FileWithPath | null>(null);
+
+    const saveNotes = ({ token, orderId, notes }) => {
+        // Patch the order with the new private notes
+        backendAPI(token).patch(`/orders/${orderId}`, { "private_notes": notes }).then(() => {
+            // Show notification
+            notifications.show({
+                title: "Private Notes Saved",
+                message: "Your private notes have been successfully saved for this order!",
+            })
+        });
+    };
+
+    const uploadFile = () => {
+        if (uploadedFile !== null) {
+            backendAPI(token).get(`/files/upload?filename=PO${data?.submission_id}-final-invoice.pdf`)
+                .then((response) => {
+                    setIsUploading(true);
+
+                    axios.put(response.data.upload_url, uploadedFile, {
+                        headers: {
+                            "x-ms-blob-type": "BlockBlob"
+                        },
+                        onUploadProgress: (progressEvent) => {
+                            const progress = Math.round(
+                                (progressEvent.loaded * 100) / (progressEvent.total || 1)
+                            );
+
+                            if (progress === 100) {
+                                setIsUploading(false);
+
+                                notifications.show({
+                                    title: "File Upload",
+                                    message: "Invoice has been uploaded successfully!"
+                                });
+
+                                notifications.show({
+                                    title: "File Upload",
+                                    message: "Refresh this page to view the latest invoice."
+                                });
+                            }
+                        }
+                    })
+                });
+
+            backendAPI(token).patch(`/orders/${orderId}`, { "invoice_uploaded": true })
+        } else {
+            notifications.show({
+                title: "File Upload",
+                message: "Please select a file before uploading."
+            });
+        }
+    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -166,8 +211,55 @@ function FinanceOrderViewPage() {
                         <TableItemText label="Notes" text={data?.notes ? data.notes : "None"} />
                         <TableItemText label="Variation" text={data?.variation ? data.variation : "None"} />
                     </Stack>
+                    <Stack orientation="column">
+                        <TableItemText label="Invoice" text={data?.invoice_uploaded === true ? "Yes" : "No"} />
+                    </Stack>
                 </Stack>
             }
+
+            {isLoading ? <LoadingSkeletonSingle height={400} /> :
+                <Dropzone
+                    onDrop={(files) => setUploadedFile(files[0])}
+                    onReject={(files) => console.log('rejected files: ' + files)}
+                    maxSize={5 * 1024 ** 2}
+                    accept={PDF_MIME_TYPE}
+                    my="md"
+                >
+                    <Group>
+                        <Dropzone.Accept>
+                            <IconUpload size={52} />
+                        </Dropzone.Accept>
+                        <Dropzone.Reject>
+                            <IconX size={52} />
+                        </Dropzone.Reject>
+                        <Dropzone.Idle>
+                            <IconPhoto size={52} />
+                        </Dropzone.Idle>
+                        <Box>
+                            <Text size="xl" inline>
+                                Drag the purchase invoice here or click to select files
+                            </Text>
+                            <Text size="sm" c="dimmed" inline mt={7}>
+                                Attach as many files as you like, each file should not exceed 5mb
+                            </Text>
+                        </Box>
+                    </Group>
+                </Dropzone>
+            }
+
+            <Group my="md">
+                <Text>{uploadedFile?.name ?? "No file selected"}</Text>
+                <Button
+                    leftSection={isUploading ? <Loader size={18} color="white" /> : <IconUpload size={18} />}
+                    onClick={uploadFile}>
+                    Upload File
+                </Button>
+                <Button
+                    leftSection={<IconX size={18} />}
+                    onClick={() => setUploadedFile(null)}>
+                    Clear
+                </Button>
+            </Group>
 
             {isLoading ? <LoadingSkeletonSingle height={350} /> :
                 <Box my="30px">

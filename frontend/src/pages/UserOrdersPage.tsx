@@ -41,44 +41,44 @@ function UserOrdersPage() {
     const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
     const [data, setData] = useState<IOrder>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [isUploading, setIsUploading] = useState<boolean>(false);
-    const [uploadedFile, setUploadedFile] = useState<FileWithPath | null>(null);
+    // const [isUploading, setIsUploading] = useState<boolean>(false);
+    // const [uploadedFile, setUploadedFile] = useState<FileWithPath | null>(null);
 
-    const uploadFile = () => {
-        if (uploadedFile !== null) {
-            backendAPI(token).get(`/files/upload?filename=PO${data?.submission_id}-final-invoice.pdf`)
-                .then((response) => {
-                    setIsUploading(true);
+    // const uploadFile = () => {
+    //     if (uploadedFile !== null) {
+    //         backendAPI(token).get(`/files/upload?filename=PO${data?.submission_id}-final-invoice.pdf`)
+    //             .then((response) => {
+    //                 setIsUploading(true);
 
-                    axios.put(response.data.upload_url, uploadedFile, {
-                        headers: {
-                            "x-ms-blob-type": "BlockBlob"
-                        },
-                        onUploadProgress: (progressEvent) => {
-                            const progress = Math.round(
-                                (progressEvent.loaded * 100) / (progressEvent.total || 1)
-                            );
+    //                 axios.put(response.data.upload_url, uploadedFile, {
+    //                     headers: {
+    //                         "x-ms-blob-type": "BlockBlob"
+    //                     },
+    //                     onUploadProgress: (progressEvent) => {
+    //                         const progress = Math.round(
+    //                             (progressEvent.loaded * 100) / (progressEvent.total || 1)
+    //                         );
 
-                            if (progress === 100) {
-                                setIsUploading(false);
+    //                         if (progress === 100) {
+    //                             setIsUploading(false);
 
-                                notifications.show({
-                                    title: "File Upload",
-                                    message: "Invoice has been uploaded successfully!"
-                                });
-                            }
-                        }
-                    })
-                });
+    //                             notifications.show({
+    //                                 title: "File Upload",
+    //                                 message: "Invoice has been uploaded successfully!"
+    //                             });
+    //                         }
+    //                     }
+    //                 })
+    //             });
 
-            backendAPI(token).patch(`/orders/${orderId}`, { "invoice_uploaded": true })
-        } else {
-            notifications.show({
-                title: "File Upload",
-                message: "Please select a file before uploading."
-            });
-        }
-    };
+    //         backendAPI(token).patch(`/orders/${orderId}`, { "invoice_uploaded": true })
+    //     } else {
+    //         notifications.show({
+    //             title: "File Upload",
+    //             message: "Please select a file before uploading."
+    //         });
+    //     }
+    // };
 
     useEffect(() => {
         setIsLoading(true);
@@ -134,7 +134,7 @@ function UserOrdersPage() {
                 </Stack>
             }
 
-            {isLoading ? <LoadingSkeletonSingle height={350} /> :
+            {/* {isLoading ? <LoadingSkeletonSingle height={350} /> :
                 <Box style={{
                     display: data?.invoice_uploaded ? "none" : "block",
                 }}>
@@ -180,7 +180,7 @@ function UserOrdersPage() {
                         </Button>
                     </Group>
                 </Box>
-            }
+            } */}
         </Container>
     )
 }

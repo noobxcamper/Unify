@@ -15,7 +15,8 @@ function OrdersTable() {
         { field: 'responder', headerName: 'Submitted By', flex: 1, headerClassName: "mui-table-header" },
         { field: 'items', headerName: 'Items', flex: 1, headerClassName: "mui-table-header" },
         { field: 'quantity', headerName: 'Qty', headerClassName: "mui-table-header" },
-        { field: 'price', headerName: 'Price', flex: 1, headerClassName: "mui-table-header",  valueFormatter: (val) => formatPrice(val)},
+        { field: 'price', headerName: 'Price', flex: 1, headerClassName: "mui-table-header",  valueFormatter: (val) => formatPrice(val) },
+        { field: 'invoice_uploaded', headerName: 'Invoice', flex: 1, headerClassName: "mui-table-header",  valueFormatter: (val) => val == true ? "Yes" : "No" },
     ];
 
     const navigate = useNavigate();
