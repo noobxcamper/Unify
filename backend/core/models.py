@@ -24,6 +24,7 @@ class Order(models.Model):
     variation = models.CharField(max_length=200, blank=True, default='No variation')
     notes = models.CharField(max_length=200, blank=True, default='No notes')
     quantity = models.IntegerField(default=0)
+    location = models.CharField(max_length=100, default='Canada')
     ship_to = models.CharField(max_length=100, default='No shipping method')
     shipping_address = models.CharField(max_length=100, blank=True, default='No shipping address')
     hyperlink = models.CharField(max_length=500, default='No hyperlink')

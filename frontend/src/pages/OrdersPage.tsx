@@ -12,6 +12,7 @@ function OrdersTable() {
         { field: 'submission_date', headerName: 'Date', headerClassName: "mui-table-header" },
         { field: 'status', headerName: 'Status', flex: 1, headerClassName: "mui-table-header", valueFormatter: (val) => getOrderStatusText(val), renderCell: (params) => {return ( <TableItemPill status={params.value} /> )} },
         { field: 'department', headerName: 'Department', flex: 1, headerClassName: "mui-table-header" },
+        { field: 'location', headerName: 'Location', flex: 1, headerClassName: "mui-table-header" },
         { field: 'responder', headerName: 'Submitted By', flex: 1, headerClassName: "mui-table-header" },
         { field: 'items', headerName: 'Items', flex: 1, headerClassName: "mui-table-header" },
         { field: 'quantity', headerName: 'Qty', headerClassName: "mui-table-header" },

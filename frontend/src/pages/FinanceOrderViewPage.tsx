@@ -77,6 +77,8 @@ function FinanceOrderViewPage() {
                             if (progress === 100) {
                                 setIsUploading(false);
 
+                                backendAPI(token).patch(`/orders/${orderId}`, { "invoice_uploaded": true })
+
                                 notifications.show({
                                     title: "File Upload",
                                     message: "Invoice has been uploaded successfully!"
@@ -90,8 +92,6 @@ function FinanceOrderViewPage() {
                         }
                     })
                 });
-
-            backendAPI(token).patch(`/orders/${orderId}`, { "invoice_uploaded": true })
         } else {
             notifications.show({
                 title: "File Upload",
