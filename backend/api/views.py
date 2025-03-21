@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework_api_key.permissions import HasAPIKey
 from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
 from azure.core.credentials import AccessToken
-from core.permissions import RBAC
+from core.permissions import AdminPermission, FinancePermission, UserPermission
 from core.models import Incident, Order
 from .serializers import IncidentSerializer, OrderSerializer
 from datetime import datetime, timedelta, timezone
@@ -15,24 +15,24 @@ from datetime import datetime, timedelta, timezone
 
 #region Orders API
 @api_view(['GET'])
-@permission_classes([HasAPIKey | RBAC])
+@permission_classes([HasAPIKey | AdminPermission | FinancePermission])
 def get_all_orders(request):
     orders = Order.objects.all()
     serializer = OrderSerializer(orders, many=True)
 
     return Response(serializer.data)
 
-@api_view(['GET'])
-@permission_classes([RBAC])
-def get_all_user_orders(request):
-    user_email = request.GET.get('user')
-    orders = Order.objects.filter(email=user_email)
-    serializer = OrderSerializer(orders, many=True)
+# @api_view(['GET'])
+# @permission_classes([RBAC])
+# def get_all_user_orders(request):
+#     user_email = request.GET.get('user')
+#     orders = Order.objects.filter(email=user_email)
+#     serializer = OrderSerializer(orders, many=True)
 
-    return Response(serializer.data)
+#     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([RBAC])
+@permission_classes([AdminPermission | UserPermission])
 def get_user_orders(request):
     try:
         user_email = request.GET['email']
@@ -50,7 +50,7 @@ def get_user_orders(request):
     return Response(serializer.data)
 
 class OrdersAPI(APIView):
-    permission_classes = [HasAPIKey | RBAC]
+    permission_classes = [HasAPIKey | AdminPermission | FinancePermission | UserPermission]
 
     def get(self, request, order_id):
         order = Order.objects.get(submission_id=order_id)
@@ -90,6 +90,7 @@ class OrdersAPI(APIView):
 
 #region Incidents API
 @api_view(['GET'])
+@permission_classes([AdminPermission])
 def get_all_incidents(request):
     incidents = Incident.objects.all()
     serializer = IncidentSerializer(incidents, many=True)
@@ -99,7 +100,7 @@ def get_all_incidents(request):
 
 #region Files API
 @api_view(['GET'])
-@permission_classes([RBAC])
+@permission_classes([AdminPermission | FinancePermission])
 def get_download_url(request):
     blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
     blob_name = request.GET.get("filename")
@@ -122,7 +123,7 @@ def get_download_url(request):
     return Response({"download_url": download_url})
 
 @api_view(['GET'])
-@permission_classes([RBAC])
+@permission_classes([AdminPermission | FinancePermission])
 def get_upload_url(request):
     blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CONNECTION_STRING)
     blob_name = request.GET.get("filename")

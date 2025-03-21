@@ -170,6 +170,10 @@ const softLogout = () => {
     window.location.href = "/login";
 }
 
+/**
+ * @param tokenClaim Microsoft token claim for the signed in user
+ * @returns True if the user is admin, False if not
+ */
 const isAdmin = (tokenClaim: IdTokenClaims) => {
     let admin = false;
 
@@ -183,6 +187,22 @@ const isAdmin = (tokenClaim: IdTokenClaims) => {
 
     return admin;
 };
+
+const isFinance = (tokenClaim: IdTokenClaims) => {
+    let finance = false;
+
+    tokenClaim.roles?.forEach((role) => {
+        if ("Finance".includes(role)) {
+            finance = true;
+        } else {
+            finance = false;
+        }
+    });
+
+    console.log(finance);
+
+    return finance;
+}
 
 // Redirect to homepage on login success
 msalInstance.addEventCallback((event) => {
@@ -204,6 +224,11 @@ msalInstance.addEventCallback((event) => {
 
             setTimeout(() => {
                 loginSuccessRedirect("/admin/dashboard");
+            }, 300);
+        }
+        else if (isFinance(payload.idTokenClaims)) {
+            setTimeout(() => {
+                loginSuccessRedirect("/finance/orders");
             }, 300);
         }
         else {
