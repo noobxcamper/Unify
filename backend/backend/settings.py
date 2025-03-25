@@ -44,6 +44,7 @@ if DEBUG:
 else:
     CORS_ALLOWED_ORIGINS = [
         'http://99.244.215.155:3000',
+        'https://unify.experiorheadoffice.ca'
     ]
 
 # Application definition

@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 
 #region Orders API
 @api_view(['GET'])
-@permission_classes([HasAPIKey | AdminPermission | FinancePermission])
+@permission_classes([AdminPermission | FinancePermission])
 def get_all_orders(request):
     orders = Order.objects.all()
     serializer = OrderSerializer(orders, many=True)

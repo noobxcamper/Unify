@@ -22,6 +22,7 @@ class FinancePermission(BasePermission):
         
         # Check for roles in the decoded token dictionary
         user_roles = request.user.get("roles", [])
+        print(user_roles)
         if any(role in self.required_roles for role in user_roles):
             return True
         return False

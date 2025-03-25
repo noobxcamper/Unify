@@ -1,21 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { DataGrid, GridToolbar, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarContainer, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { Paper } from "@mantine/core";
 import { backendAPI } from "../utils/api";
 import { LoadingSkeletonMulti } from "./LoadingSkeleton";
 import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
-
-function Test() {
-    return (
-        <>
-            <GridToolbarQuickFilter
-                variant="outlined"
-                sx={{ width: 300 }}
-                placeholder="Search..."
-            />
-        </>
-    )
-}
 
 function DataTableComponent({ data, columns, eventHandler }) {
     const paginationModel = { page: 0, pageSize: 15 };
@@ -38,7 +26,13 @@ function DataTableComponent({ data, columns, eventHandler }) {
                     }}
                     pageSizeOptions={[5, 10, 15, 20, 25, 30]}
                     checkboxSelection
-                    slots={{ toolbar: () => <Test /> }}
+                    // slots={{ toolbar: () => <Test /> }}
+                    slots={{
+                        toolbar: () =>
+                            <GridToolbarContainer>
+                                <GridToolbarQuickFilter />
+                            </GridToolbarContainer>
+                    }}
                     slotProps={{
                         toolbar: {
                             showQuickFilter: true,
