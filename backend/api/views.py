@@ -2,10 +2,8 @@ from backend.settings import AZURE_STORAGE_CONNECTION_KEY, AZURE_STORAGE_CONNECT
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework_api_key.permissions import HasAPIKey
 from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
-from azure.core.credentials import AccessToken
 from core.permissions import AdminPermission, FinancePermission, UserPermission
 from core.models import Incident, Order
 from .serializers import IncidentSerializer, OrderSerializer
