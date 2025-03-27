@@ -236,6 +236,9 @@ function FinanceOrderViewPage() {
                     maxSize={5 * 1024 ** 2}
                     accept={PDF_MIME_TYPE}
                     my="md"
+                    style={{
+                        display: data?.status === 3 ? "none" : "flex"
+                    }}
                 >
                     <Group>
                         <Dropzone.Accept>
@@ -257,7 +260,9 @@ function FinanceOrderViewPage() {
             }
 
             {isLoading ? <LoadingSkeletonSingle height={36} /> :
-                <Group my="md">
+                <Group my="md" style={{
+                    display: data?.status === 3 ? "none" : "flex"
+                }}>
                     <Text>{uploadedFile?.name ?? "No file selected"}</Text>
                     <Button
                         leftSection={isUploading ? <Loader size={18} color="white" /> : <IconUpload size={18} />}
