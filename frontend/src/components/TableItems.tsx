@@ -1,13 +1,15 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import { Pill } from "@mantine/core";
+import { Pill, Tooltip } from "@mantine/core";
 import { getOrderStatusText } from "../constants/enums";
 
 function TableItemText({ label = "Label", text }) {
     return (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column", maxWidth: "250px" }}>
             <Typography fontSize={12} color="gray">{label}</Typography>
-            <Typography fontSize={14}>{text}</Typography>
+            <Tooltip position="bottom" label={text}>
+                <Typography style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} fontSize={14}>{text}</Typography>
+            </Tooltip>
         </div>
     )
 }

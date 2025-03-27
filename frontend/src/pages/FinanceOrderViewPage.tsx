@@ -23,6 +23,7 @@ interface IOrder {
     responder: string,
     email: string,
     department: string,
+    vendor: string,
     items: string,
     price: number,
     variation: string,
@@ -126,7 +127,7 @@ function FinanceOrderViewPage() {
     return (
         <Container>
             {/* Top row */}
-            {isLoading ? <LoadingSkeletonSingle height={50} /> :
+            {isLoading ? <LoadingSkeletonSingle height={28} /> :
                 <Group justify="flex-start" mb="30px">
                     <Tooltip position="bottom" label="Go back">
                         <ActionIcon
@@ -201,7 +202,7 @@ function FinanceOrderViewPage() {
                 </Group>
             }
 
-            {isLoading ? <LoadingSkeletonSingle height={200} /> :
+            {isLoading ? <LoadingSkeletonSingle height={186} /> :
                 <Stack orientation="row" spacing="80px">
                     <Stack orientation="column">
                         <TableItemText label="Date" text={data?.submission_date} />
@@ -222,12 +223,13 @@ function FinanceOrderViewPage() {
                         <TableItemText label="Variation" text={data?.variation ? data.variation : "None"} />
                     </Stack>
                     <Stack orientation="column">
+                        <TableItemText label="Vendor" text={data?.vendor} />
                         <TableItemText label="Invoice" text={data?.invoice_uploaded === true ? "Yes" : "No"} />
                     </Stack>
                 </Stack>
             }
 
-            {isLoading ? <LoadingSkeletonSingle height={400} /> :
+            {isLoading ? <LoadingSkeletonSingle height={69} /> :
                 <Dropzone
                     onDrop={(files) => setUploadedFile(files[0])}
                     onReject={(files) => console.log('rejected files: ' + files)}
@@ -254,21 +256,23 @@ function FinanceOrderViewPage() {
                 </Dropzone>
             }
 
-            <Group my="md">
-                <Text>{uploadedFile?.name ?? "No file selected"}</Text>
-                <Button
-                    leftSection={isUploading ? <Loader size={18} color="white" /> : <IconUpload size={18} />}
-                    onClick={uploadFile}>
-                    Upload File
-                </Button>
-                <Button
-                    leftSection={<IconX size={18} />}
-                    onClick={() => setUploadedFile(null)}>
-                    Clear
-                </Button>
-            </Group>
+            {isLoading ? <LoadingSkeletonSingle height={36} /> :
+                <Group my="md">
+                    <Text>{uploadedFile?.name ?? "No file selected"}</Text>
+                    <Button
+                        leftSection={isUploading ? <Loader size={18} color="white" /> : <IconUpload size={18} />}
+                        onClick={uploadFile}>
+                        Upload File
+                    </Button>
+                    <Button
+                        leftSection={<IconX size={18} />}
+                        onClick={() => setUploadedFile(null)}>
+                        Clear
+                    </Button>
+                </Group>
+            }
 
-            {isLoading ? <LoadingSkeletonSingle height={350} /> :
+            {isLoading ? <LoadingSkeletonSingle height={375} /> :
                 <Box my="30px">
                     <TextEditor content={`${data?.private_notes}`} setText={setEditorText} />
                 </Box>

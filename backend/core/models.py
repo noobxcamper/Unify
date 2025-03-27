@@ -19,6 +19,7 @@ class Order(models.Model):
     responder = models.CharField(max_length=100, default='No username')
     email = models.EmailField(max_length=100, default='No email')
     department = models.CharField(max_length=50, default='No department')
+    vendor = models.CharField(max_length=50, default="No vendor")
     items = models.CharField(max_length=50, default='No items')
     price = models.FloatField(default=0.0)
     variation = models.CharField(max_length=200, blank=True, default='No variation')
