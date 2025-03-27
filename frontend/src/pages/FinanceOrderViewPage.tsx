@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router";
 import { ActionIcon, Box, Container, Group, Menu, MenuDivider, Modal, Tooltip, Text, Button, Loader } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconArrowLeft, IconBrandTeams, IconDeviceFloppy, IconDots, IconEye, IconMail, IconPhoto, IconReceipt, IconUpload, IconX } from "@tabler/icons-react";
+import { IconArrowLeft, IconBrandTeams, IconDeviceFloppy, IconDots, IconExternalLink, IconEye, IconMail, IconPhoto, IconReceipt, IconUpload, IconX } from "@tabler/icons-react";
 import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
 import { formatPrice } from "../utils/utilities";
@@ -157,6 +157,16 @@ function FinanceOrderViewPage() {
                         </Menu.Target>
 
                         <Menu.Dropdown>
+                            <Menu.Label>Purchase Order</Menu.Label>
+
+                            <Tooltip position="right" label="Opens product page in a new tab">
+                                <Menu.Item component="a" leftSection={<IconExternalLink size={18} />} href={data?.hyperlink} target="_blank">
+                                    Product Page
+                                </Menu.Item>
+                            </Tooltip>
+
+                            <MenuDivider />
+
                             <Menu.Label>Communication</Menu.Label>
 
                             <Tooltip position="right" label="Send user an email">
