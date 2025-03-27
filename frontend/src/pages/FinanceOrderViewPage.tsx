@@ -278,6 +278,7 @@ function FinanceOrderViewPage() {
                 </Box>
             }
 
+            {/* Invoice preview */}
             <Modal opened={previewOpened} onClose={close} title="Invoice Preview" size={"auto"} >
                 <PDFViewer url={invoiceUrl} />
             </Modal>
