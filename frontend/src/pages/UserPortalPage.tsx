@@ -27,7 +27,7 @@ function UserPortalPage() {
     ];
 
     const rowClick: GridEventListener<'rowClick'> = (params) => {
-        navigate(`/my_orders/${params.row.submission_id}`);
+        navigate(`/orders/${params.row.submission_id}`);
     }
 
     return (

@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Paper, Button, Text, ActionIcon, useMantineColorScheme } from "@mantine/core";
-import { loginHandler } from "../utils/MsalAuthHandler";
+import { loginHandler, msalInstance } from "../utils/MsalAuthHandler";
 import { IconBrandWindowsFilled, IconMoon, IconSun } from "@tabler/icons-react";
+import { useNavigate } from "react-router";
+import { AuthenticationResult } from "@azure/msal-browser";
 
 function Login() {
     const { colorScheme, setColorScheme } = useMantineColorScheme();
+    const navigate = useNavigate();
 
     const colorSchemeToggle = () => {
         if (colorScheme === 'dark') {
@@ -13,6 +16,35 @@ function Login() {
             setColorScheme('dark');
         }
     };
+
+    useEffect(() => {
+        msalInstance.handleRedirectPromise().then((response: AuthenticationResult | null) => {
+            if (response !== null && response.account) {
+                msalInstance.setActiveAccount(response.account);
+                const assignedRoles = response.account.idTokenClaims?.roles;
+
+                if (assignedRoles) {
+                    switch (assignedRoles[0]) {
+                        case 'Admin':
+                            // redirect to admin
+                            navigate("/admin/dashboard");
+                            break;
+                        case 'Finance':
+                            // redirect to finance
+                            navigate("/finance/orders");
+                            break;
+                        case 'User':
+                            // redirect to user
+                            navigate("/");
+                            break;
+                        default:
+                            navigate('/login');
+                            break;
+                    }
+                }
+            }
+        });
+    }, [])
 
     return (
         <>
@@ -23,7 +55,7 @@ function Login() {
                 justifyContent: "center",
                 alignItems: "center",
             }}>
-                <Paper shadow={"md"} mb="16px" style={{
+                <Paper shadow="md" mb="16px" style={{
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",

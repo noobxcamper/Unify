@@ -6,7 +6,7 @@ import { formatPrice } from "../utils/utilities";
 import { getOrderStatusText } from "../constants/enums";
 import { TableItemPill } from "../components/TableItems";
 
-function OrdersTable() {
+function FinanceOrdersPage() {
     const columns: GridColDef[] = [
         { field: 'submission_id', headerName: 'ID', width: 50, headerClassName: "mui-table-header" },
         { field: 'submission_date', headerName: 'Date', headerClassName: "mui-table-header" },
@@ -23,7 +23,7 @@ function OrdersTable() {
     const navigate = useNavigate();
 
     const rowClick: GridEventListener<'rowClick'> = (params) => {
-        navigate(`${params.row.submission_id}`);
+        navigate(`orders/${params.row.submission_id}`);
     }
 
     return (
@@ -33,4 +33,4 @@ function OrdersTable() {
     )
 }
 
-export default OrdersTable
+export default FinanceOrdersPage

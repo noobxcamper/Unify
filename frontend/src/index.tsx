@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { Notifications } from '@mantine/notifications';
-import { ActionIcon, Button, colorsTuple, createTheme, Divider, MantineProvider, Text } from '@mantine/core';
+import { ActionIcon, Button, createTheme, Divider, MantineProvider, Text } from '@mantine/core';
 import { msalInstance } from './utils/MsalAuthHandler';
 import { MsalProvider } from '@azure/msal-react';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -20,18 +20,19 @@ import AdminApp from './apps/AdminApp';
 import UserApp from './apps/UserApp';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
-import OrderViewPage from './pages/OrderViewPage';
 import FinanceOrderViewPage from './pages/FinanceOrderViewPage';
 import IncidentsPage from './pages/IncidentsPage';
 import IncidentReportPage from './pages/IncidentReportPage'
 import IncidentPlanPage from './pages/IncidentPlanPage'
-import OrdersPage from './pages/OrdersPage';
 import Http404Page from './pages/Http404Page'
 import DevelopmentPage from './pages/DevelopmentPage';
 import TicketsPage from './pages/TicketsPage';
 import AccountPage from './pages/AccountPage';
 import UserPortalPage from './pages/UserPortalPage';
 import UserOrdersPage from './pages/UserOrdersPage';
+import FinanceOrdersPage from './pages/FinanceOrdersPage';
+import PurchasingOrderViewPage from './pages/PurchasingOrderViewPage';
+import PurchasingOrdersPage from './pages/PurchasingOrdersPage';
 
 // Place pages here for routing
 const router = createBrowserRouter([
@@ -98,7 +99,7 @@ const router = createBrowserRouter([
                 Component: UserPortalPage
             },
             {
-                path: '/my_orders/:orderId',
+                path: '/orders/:orderId',
                 Component: UserOrdersPage
             },
         ]
@@ -108,13 +109,27 @@ const router = createBrowserRouter([
         element: <ProtectedRoute requiredRoles={["Finance"]}><UserApp /></ProtectedRoute>,
         children: [
             {
-                path: 'orders',
-                Component: OrdersPage,
+                path: '',
+                Component: FinanceOrdersPage,
             },
             {
                 path: 'orders/:orderId',
                 Component: FinanceOrderViewPage
             },
+        ]
+    },
+    {
+        path: '/purchasing',
+        element: <ProtectedRoute requiredRoles={["Purchasing"]}><UserApp /></ProtectedRoute>,
+        children: [
+            {
+                path: '',
+                Component: PurchasingOrdersPage
+            },
+            {
+                path: 'orders/:orderId',
+                Component: PurchasingOrderViewPage
+            }
         ]
     }
 ]);

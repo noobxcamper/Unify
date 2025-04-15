@@ -1,13 +1,6 @@
 import { AuthenticationResult, EventType, IdTokenClaims, PublicClientApplication } from "@azure/msal-browser";
 import { msalConfig } from "../settings/authConfig";
 
-/**
- * Roles here will have access to the Graph API. These roles here are used to determine whether the logged in user should get Graph API access upon refreshing the token.
- */
-const adminRoles = [
-    "Admin",
-]
-
 /** 
 * Required scopes
 * These scopes are for authentication with the backend API, they are DIFFERENT from Graph tokens!!
@@ -118,28 +111,9 @@ const getGraphTokenSilently = async () => {
         });
 };
 
-// Get first active account on page load and redirect to homepage
-if (!msalInstance.getActiveAccount() && msalInstance.getAllAccounts().length > 0) {
-    msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
-}
-
-// Get the redirect parameter from the URL and redirect the user to that page.
-// Can be overriden by setting its parameter to something else.
-/**
- * Get the redirect parameter from the URL and redirect the user there.
- * @param fallbackUrl redirect to this URL in case the redirect parameter does not exist
- */
-const loginSuccessRedirect = (fallbackUrl: string) => {
-    // Get the redirect parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const redirectParam = urlParams.get("redirect");
-
-    window.location.href = redirectParam ?? fallbackUrl;
-}
-
 const loginHandler = async () => {
     // Login and redirect using the api scopes
-    msalInstance.loginPopup(apiScopes)
+    msalInstance.loginRedirect(apiScopes)
         .catch(error => {
             console.error(error);
         })
@@ -147,14 +121,14 @@ const loginHandler = async () => {
 
 // Logout handler for signing out, uses the current active account.
 const logoutHandler = async () => {
-    msalInstance.logoutPopup({ account: msalInstance.getActiveAccount() })
+    // Clear the tokens
+    localStorage.removeItem(GRAPH_ACCESS_TOKEN);
+    localStorage.removeItem(API_ACCESS_TOKEN);
+
+    msalInstance.logoutRedirect({ account: msalInstance.getActiveAccount() })
         .then(() => {
             // Redirect to login page
             window.location.href = "/login";
-
-            // Clear the tokens
-            localStorage.removeItem(GRAPH_ACCESS_TOKEN);
-            localStorage.removeItem(API_ACCESS_TOKEN);
         });
 }
 
@@ -178,7 +152,7 @@ const isAdmin = (tokenClaim: IdTokenClaims) => {
     let admin = false;
 
     tokenClaim.roles?.forEach((role) => {
-        if (adminRoles.includes(role)) {
+        if ("Admin".includes(role)) {
             admin = true;
         } else {
             admin = false;
@@ -187,22 +161,6 @@ const isAdmin = (tokenClaim: IdTokenClaims) => {
 
     return admin;
 };
-
-const isFinance = (tokenClaim: IdTokenClaims) => {
-    let finance = false;
-
-    tokenClaim.roles?.forEach((role) => {
-        if ("Finance".includes(role)) {
-            finance = true;
-        } else {
-            finance = false;
-        }
-    });
-
-    console.log(finance);
-
-    return finance;
-}
 
 // Redirect to homepage on login success
 msalInstance.addEventCallback((event) => {
@@ -217,22 +175,8 @@ msalInstance.addEventCallback((event) => {
         // Get the access tokens with the given scope and set it in the application storage
         getIdTokenSilently();
 
-        // Get the roles for the user and redirect appropriately
-        // Additionally, if the user is Admin, get the graph api tokens
         if (isAdmin(payload.idTokenClaims)) {
             getGraphTokenSilently();
-
-            setTimeout(() => {
-                loginSuccessRedirect("/admin/dashboard");
-            }, 300);
-        }
-        else if (isFinance(payload.idTokenClaims)) {
-            setTimeout(() => {
-                loginSuccessRedirect("/finance/orders");
-            }, 300);
-        }
-        else {
-            loginSuccessRedirect("/");
         }
     }
 });
@@ -243,7 +187,6 @@ export {
     loginHandler,
     logoutHandler,
     softLogout,
-    loginSuccessRedirect,
     getIdTokenSilently,
     getGraphTokenSilently,
     didTokenExpire
