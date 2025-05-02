@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const backendAPI = (token: string) => axios.create({
-    // baseURL: "https://core.unify.experiorheadoffice.ca/api",
-    baseURL: "http://192.168.50.232:36594/api",
+    baseURL: "https://core.unify.experiorheadoffice.ca/api",
     headers: {
         Authorization: `Bearer ${token}`,
     },
