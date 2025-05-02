@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { ActionIcon, Box, Button, Card, Container, Divider, Grid, Group, Input, Menu, Modal, Stack, Table, Text, Textarea, Title, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, Button, Card, Container, Divider, Grid, Group, Input, Menu, MenuDivider, Modal, Stack, Table, Text, Textarea, Title, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconAddressBook, IconArrowLeft, IconArrowsShuffle, IconBell, IconBox, IconBrandTeams, IconCalendar, IconCheck, IconClick, IconClock, IconCurrencyDollar, IconDeviceFloppy, IconDots, IconExternalLink, IconMail, IconNote, IconNumber, IconPackages, IconProgress, IconReceipt, IconSitemap, IconTex, IconTruck, IconTruckDelivery, IconUser, IconX } from "@tabler/icons-react";
+import { IconAddressBook, IconArrowLeft, IconArrowsShuffle, IconBell, IconBox, IconBrandTeams, IconCalendar, IconCheck, IconClick, IconClock, IconCurrencyDollar, IconDeviceFloppy, IconDots, IconExternalLink, IconEye, IconMail, IconNote, IconNumber, IconPackages, IconProgress, IconReceipt, IconSitemap, IconTex, IconTruck, IconTruckDelivery, IconUser, IconX } from "@tabler/icons-react";
 import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
 import { TableItemText, TableItemPill } from "../components/TableItems";
 import { formatPrice } from "../utils/utilities";
@@ -11,27 +11,9 @@ import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
 import TextEditor from "../components/RichTextEditor";
 import IconText from "../components/IconText";
 import { getOrderStatusText } from "../constants/enums";
-
-interface IOrder {
-    id: number,
-    submission_id: string,
-    submission_date: string,
-    status: number,
-    responder: string,
-    email: string,
-    department: string,
-    items: string,
-    price: number,
-    variation: string,
-    notes: string,
-    quantity: number,
-    ship_to: string,
-    shipping_address: string,
-    hyperlink: string,
-    tracking_url: string,
-    invoice_uploaded: boolean,
-    private_notes: string
-}
+import PDFViewer from "../components/PDFViewer";
+import IOrder from "../interfaces/IOrder";
+import OrderTiles from "../components/OrderTiles";
 
 function SubmitModal({ token, data, modalOpened, onModalClose }: { token: string, data: IOrder, modalOpened: boolean, onModalClose: () => void }) {
     const [notes, setNotes] = useState<string>();
@@ -158,7 +140,7 @@ function PurchasingOrderViewPage() {
                 setIsLoading(false);
 
                 // Get invoice URL if available
-                backendAPI(token).get(`/files/download?filename=PO${response.data.submission_id}-final-invoice.pdf`)
+                backendAPI(token).get(`/files/download?filename=PO10-final-invoice.pdf`)
                     .then((response) => {
                         setInvoiceUrl(response.data.download_url);
                     })
@@ -172,213 +154,70 @@ function PurchasingOrderViewPage() {
     }, []);
 
     return (
-        // <Container>
-        //     {/* Top row */}
-        //     {isLoading ? <LoadingSkeletonSingle height={50} /> :
-        //         <Group justify="flex-start" mb="30px">
-        //             <Tooltip position="bottom" label="Go back">
-        //                 <ActionIcon
-        //                     style={{
-        //                         marginRight: "auto"
-        //                     }}
-        //                     className="unify-button-subtle"
-        //                     onClick={() => navigate(-1)}>
-        //                     <IconArrowLeft size={22} />
-        //                 </ActionIcon>
-        //             </Tooltip>
+        <Grid justify="center">
+            <Grid.Col span={4}>
+                {isLoading ? <LoadingSkeletonSingle height={28} /> :
+                    <Group justify="flex-start" mb="30px">
+                        <Tooltip position="bottom" label="Go back">
+                            <ActionIcon
+                                style={{
+                                    marginRight: "auto"
+                                }}
+                                className="unify-button-subtle"
+                                onClick={() => navigate(-1)}>
+                                <IconArrowLeft size={22} />
+                            </ActionIcon>
+                        </Tooltip>
 
-        //             <Tooltip position="bottom" label="Save your private notes">
-        //                 <ActionIcon
-        //                     className="unify-button-subtle"
-        //                     onClick={() => saveNotes({ token, orderId: data?.submission_id, notes: editorText })}>
-        //                     <IconDeviceFloppy size={22} />
-        //                 </ActionIcon>
-        //             </Tooltip>
+                        <Menu
+                            shadow="md"
+                            width={200}>
+                            <Menu.Target>
+                                <ActionIcon className="unify-button-subtle">
+                                    <IconDots />
+                                </ActionIcon>
+                            </Menu.Target>
 
-        //             <Menu
-        //                 shadow="md"
-        //                 width={200}>
-        //                 <Menu.Target>
-        //                     <ActionIcon className="unify-button-subtle">
-        //                         <IconDots />
-        //                     </ActionIcon>
-        //                 </Menu.Target>
+                            <Menu.Dropdown>
+                                <Menu.Label>Purchase Order</Menu.Label>
 
-        //                 <Menu.Dropdown>
-        //                     <Menu.Label>Order Actions</Menu.Label>
+                                <Tooltip position="right" label="Opens product page in a new tab">
+                                    <Menu.Item component="a" leftSection={<IconExternalLink size={18} />} href={data?.hyperlink} target="_blank">
+                                        Product Page
+                                    </Menu.Item>
+                                </Tooltip>
 
-        //                     <Tooltip position="right" label="Submit the order">
-        //                         <Menu.Item leftSection={<IconCheck size={18} />} onClick={() => setSubmitModalOpened(true)} disabled={data?.status !== 0 && data?.status !== 2 ? true : false}>
-        //                             Submit
-        //                         </Menu.Item>
-        //                     </Tooltip>
+                                <MenuDivider />
 
-        //                     <Tooltip position="right" label="Make order as in progress">
-        //                         <Menu.Item leftSection={<IconProgress size={18} />} onClick={() => inProgress({ token: token, data: data })} disabled={data?.status !== 0 && data?.status !== 2 ? true : false}>
-        //                             In Progress
-        //                         </Menu.Item>
-        //                     </Tooltip>
+                                <Menu.Label>Communication</Menu.Label>
 
-        //                     <Tooltip position="right" label="Cancel the order">
-        //                         <Menu.Item leftSection={<IconX size={18} />} onClick={() => setCancelModalOpened(true)} disabled={data?.status !== 0 && data?.status !== 2 ? true : false}>
-        //                             Cancel
-        //                         </Menu.Item>
-        //                     </Tooltip>
+                                <Tooltip position="right" label="Send user an email">
+                                    <Menu.Item component="a" leftSection={<IconMail size={18} />} href={`mailto:${data?.email}`}>
+                                        Send Email
+                                    </Menu.Item>
+                                </Tooltip>
 
-        //                     <Menu.Divider />
+                                <Tooltip position="right" label="Send user a teams message">
+                                    <Menu.Item component="a" leftSection={<IconBrandTeams size={18} />} href={`sip:${data?.email}`}>
+                                        Send Teams Message
+                                    </Menu.Item>
+                                </Tooltip>
 
-        //                     <Menu.Label>Order Information</Menu.Label>
+                                <MenuDivider />
 
-        //                     <Tooltip position="right" label="Opens product page in a new tab">
-        //                         <Menu.Item component="a" leftSection={<IconExternalLink size={18} />} href={data?.hyperlink} target="_blank">
-        //                             Product Page
-        //                         </Menu.Item>
-        //                     </Tooltip>
+                                <Menu.Label>Invoice</Menu.Label>
 
-        //                     <Tooltip position="right" label="Opens tracking page in a new tab">
-        //                         <Menu.Item component="a" leftSection={<IconTruck size={18} />} href={data?.tracking_url} target="_blank" disabled={data?.tracking_url !== "No tracking url" ? false : true}>
-        //                             Tracking Page
-        //                         </Menu.Item>
-        //                     </Tooltip>
-
-        //                     <Tooltip position="right" label="Download invoice for this order">
-        //                         <Menu.Item component="a" leftSection={<IconReceipt size={18} />} href={invoiceUrl ?? ""} target="_blank" download disabled={data?.invoice_uploaded !== false ? false : true}>
-        //                             Download Invoice
-        //                         </Menu.Item>
-        //                     </Tooltip>
-
-        //                     <Menu.Divider />
-
-        //                     <Menu.Label>Communication</Menu.Label>
-
-        //                     <Tooltip position="right" label="Send user an email">
-        //                         <Menu.Item component="a" leftSection={<IconMail size={18} />} href={`mailto:${data?.email}`}>
-        //                             Send Email
-        //                         </Menu.Item>
-        //                     </Tooltip>
-
-        //                     <Tooltip position="right" label="Send user a teams message">
-        //                         <Menu.Item component="a" leftSection={<IconBrandTeams size={18} />} href={`sip:${data?.email}`}>
-        //                             Send Teams Message
-        //                         </Menu.Item>
-        //                     </Tooltip>
-
-        //                     <Tooltip position="right" label="Send user a notification of order status">
-        //                         <Menu.Item leftSection={<IconBell size={18} />} onClick={() => powerAutomateApi(data)} disabled={data?.status !== 1 && data?.status !== 3 ? true : false}>
-        //                             Send Notification
-        //                         </Menu.Item>
-        //                     </Tooltip>
-        //                 </Menu.Dropdown>
-        //             </Menu>
-
-        //             <SubmitModal token={token} data={data!} modalOpened={submitModalOpened} onModalClose={() => setSubmitModalOpened(false)} />
-        //             <CancelModal token={token} data={data!} modalOpened={cancelModalOpened} onModalClose={() => setCancelModalOpened(false)} />
-        //         </Group>
-        //     }
-
-        //     {isLoading ? <LoadingSkeletonSingle height={200} /> :
-        //         <Stack orientation="row" spacing="80px">
-        //             <Stack orientation="column">
-        //                 <TableItemText label="Date" text={data?.submission_date} />
-        //                 <TableItemText label="Department" text={data?.department} />
-        //                 <TableItemText label="Name" text={data?.responder} />
-        //                 <TableItemText label="Email" text={data?.email} />
-        //             </Stack>
-        //             <Stack orientation="column">
-        //                 <TableItemPill label="Order Status" status={data?.status} />
-        //                 <TableItemText label="Items" text={data?.items} />
-        //                 <TableItemText label="Quantity" text={data?.quantity} />
-        //                 <TableItemText label="Price Per Item" text={formatPrice(data?.price ?? 0)} />
-        //             </Stack>
-        //             <Stack orientation="column">
-        //                 <TableItemText label="Ship To" text={data?.ship_to} />
-        //                 <TableItemText label="Address" text={data?.shipping_address ? data.shipping_address : "None"} />
-        //                 <TableItemText label="Notes" text={data?.notes ? data.notes : "None"} />
-        //                 <TableItemText label="Variation" text={data?.variation ? data.variation : "None"} />
-        //             </Stack>
-        //         </Stack>
-        //     }
-
-        //     {isLoading ? <LoadingSkeletonSingle height={350} /> :
-        //         <Stack orientation="column" margin="30px 0px 0px 0px">
-        //             <TextEditor content={`${data?.private_notes}`} setText={setEditorText} />
-        //         </Stack>
-        //     }
-        // </Container>
-
-        <Grid>
-            <Grid.Col span={3}>
-                <Card shadow="sm" padding="lg" radius="md" withBorder>
-                    <Text size="24px" fw={500}>Employee Details</Text>
-
-                    <Card.Section my="md">
-                        <Divider />
-                    </Card.Section>
-
-                    <Stack>
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconCalendar />} text={data?.submission_date} />
-                        }
-
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconSitemap />} text={data?.department} />
-                        }
-
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconUser />} text={data?.responder} />
-                        }
-
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconMail />} text={data?.email} />
-                        }
-                    </Stack>
-                </Card>
-
-                <Card shadow="sm" padding="lg" radius="md" mt="sm" withBorder>
-                    <Text size="24px" fw={500}>Product Details</Text>
-
-                    <Card.Section my="md">
-                        <Divider />
-                    </Card.Section>
-
-                    <Stack>
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconClock />} text={getOrderStatusText(data?.status ?? 0)} />
-                        }
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconBox />} text={data?.items} />
-                        }
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconPackages />} text={data?.quantity} />
-                        }
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconCurrencyDollar />} text={formatPrice(data?.price ?? 0)} />
-                        }
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconArrowsShuffle />} text={data?.variation === "" ? "No variation" : data?.variation} />
-                        }
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconNote />} text={data?.notes === "" ? "No notes provided" : data?.notes} />
-                        }
-                    </Stack>
-                </Card>
-
-                <Card shadow="sm" padding="lg" radius="md" mt="sm" withBorder>
-                    <Text size="24px" fw={500}>Shipping Details</Text>
-
-                    <Card.Section my="md">
-                        <Divider />
-                    </Card.Section>
-
-                    <Stack>
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconTruckDelivery />} text={data?.ship_to} />
-                        }
-                        {isLoading ? <LoadingSkeletonSingle height={25} /> :
-                            <IconText icon={<IconAddressBook />} text={data?.shipping_address === "" ? "No shipping address provided" : data?.shipping_address} />
-                        }
-                    </Stack>
-                </Card>
+                                <Tooltip position="right" label="Download invoice for this order">
+                                    <Menu.Item component="a" leftSection={<IconReceipt size={18} />} href={invoiceUrl ?? ""} target="_blank" download disabled={data?.invoice_uploaded !== false ? false : true}>
+                                        Download Invoice
+                                    </Menu.Item>
+                                </Tooltip>
+                            </Menu.Dropdown>
+                        </Menu>
+                    </Group>
+                }
+                
+                <OrderTiles data={data ?? null} isLoading={isLoading} />
 
                 <Card shadow="sm" padding="lg" radius="md" mt="sm" withBorder>
                     <Text size="24px" fw={500}>Private Notes</Text>
@@ -399,8 +238,10 @@ function PurchasingOrderViewPage() {
                     </Button>
                 </Card>
             </Grid.Col>
-            <Grid.Col span={9}>
-                Invoice preview goes here
+            <Grid.Col span={4}>
+                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                    <PDFViewer url={invoiceUrl ?? ""} />
+                </Card>
             </Grid.Col>
         </Grid>
     )

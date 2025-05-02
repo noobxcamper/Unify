@@ -1,84 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
-import { ActionIcon, Box, Button, Container, Group, Loader, LoadingOverlay, Notification, Text, Tooltip } from "@mantine/core";
-import { IconArrowLeft, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
-import { LoadingSkeletonSingle } from "../components/LoadingSkeleton";
-import { TableItemText, TableItemPill } from "../components/TableItems";
-import { formatPrice } from "../utils/utilities";
+import { useParams } from "react-router";
+import { Container } from "@mantine/core";
 import { backendAPI } from "../utils/api";
 import { API_ACCESS_TOKEN } from "../utils/MsalAuthHandler";
-import Stack from "../components/Stack";
-import { Dropzone, FileWithPath, PDF_MIME_TYPE } from "@mantine/dropzone";
 import { useAccount } from "@azure/msal-react";
-import axios from "axios";
-import { notifications } from "@mantine/notifications";
-
-interface IOrder {
-    id: number,
-    submission_id: string,
-    submission_date: string,
-    status: number,
-    responder: string,
-    email: string,
-    department: string,
-    items: string,
-    price: number,
-    variation: string,
-    notes: string,
-    quantity: number,
-    ship_to: string,
-    shipping_address: string,
-    hyperlink: string,
-    tracking_url: string,
-    invoice_uploaded: boolean,
-    private_notes: string
-}
+import IOrder from "../interfaces/IOrder";
+import OrderTiles from "../components/OrderTiles";
 
 function UserOrdersPage() {
     let { orderId } = useParams();
     const account = useAccount();
-    const navigate = useNavigate();
     const token = localStorage.getItem(API_ACCESS_TOKEN) ?? "None";
     const [data, setData] = useState<IOrder>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    // const [isUploading, setIsUploading] = useState<boolean>(false);
-    // const [uploadedFile, setUploadedFile] = useState<FileWithPath | null>(null);
-
-    // const uploadFile = () => {
-    //     if (uploadedFile !== null) {
-    //         backendAPI(token).get(`/files/upload?filename=PO${data?.submission_id}-final-invoice.pdf`)
-    //             .then((response) => {
-    //                 setIsUploading(true);
-
-    //                 axios.put(response.data.upload_url, uploadedFile, {
-    //                     headers: {
-    //                         "x-ms-blob-type": "BlockBlob"
-    //                     },
-    //                     onUploadProgress: (progressEvent) => {
-    //                         const progress = Math.round(
-    //                             (progressEvent.loaded * 100) / (progressEvent.total || 1)
-    //                         );
-
-    //                         if (progress === 100) {
-    //                             setIsUploading(false);
-
-    //                             notifications.show({
-    //                                 title: "File Upload",
-    //                                 message: "Invoice has been uploaded successfully!"
-    //                             });
-    //                         }
-    //                     }
-    //                 })
-    //             });
-
-    //         backendAPI(token).patch(`/orders/${orderId}`, { "invoice_uploaded": true })
-    //     } else {
-    //         notifications.show({
-    //             title: "File Upload",
-    //             message: "Please select a file before uploading."
-    //         });
-    //     }
-    // };
 
     useEffect(() => {
         setIsLoading(true);
@@ -95,92 +29,7 @@ function UserOrdersPage() {
 
     return (
         <Container>
-            {/* Top row */}
-            {isLoading ? <LoadingSkeletonSingle height={50} /> :
-                <Group justify="flex-start" mb="30px">
-                    <Tooltip position="bottom" label="Go back">
-                        <ActionIcon
-                            style={{
-                                marginRight: "auto"
-                            }}
-                            className="unify-button-subtle"
-                            onClick={() => navigate(-1)}>
-                            <IconArrowLeft size={22} />
-                        </ActionIcon>
-                    </Tooltip>
-                </Group>
-            }
-
-            {isLoading ? <LoadingSkeletonSingle height={200} /> :
-                <Stack orientation="row" spacing="80px">
-                    <Stack orientation="column">
-                        <TableItemText label="Date" text={data?.submission_date} />
-                        <TableItemText label="Department" text={data?.department} />
-                        <TableItemText label="Name" text={data?.responder} />
-                        <TableItemText label="Email" text={data?.email} />
-                    </Stack>
-                    <Stack orientation="column">
-                        <TableItemPill label="Order Status" status={data?.status} />
-                        <TableItemText label="Items" text={data?.items} />
-                        <TableItemText label="Quantity" text={data?.quantity} />
-                        <TableItemText label="Price Per Item" text={formatPrice(data?.price ?? 0)} />
-                    </Stack>
-                    <Stack orientation="column">
-                        <TableItemText label="Ship To" text={data?.ship_to} />
-                        <TableItemText label="Address" text={data?.shipping_address ? data.shipping_address : "None"} />
-                        <TableItemText label="Notes" text={data?.notes ? data.notes : "None"} />
-                        <TableItemText label="Variation" text={data?.variation ? data.variation : "None"} />
-                    </Stack>
-                </Stack>
-            }
-
-            {/* {isLoading ? <LoadingSkeletonSingle height={350} /> :
-                <Box style={{
-                    display: data?.invoice_uploaded ? "none" : "block",
-                }}>
-                    <Dropzone
-                        onDrop={(files) => setUploadedFile(files[0])}
-                        onReject={(files) => console.log('rejected files: ' + files)}
-                        maxSize={5 * 1024 ** 2}
-                        accept={PDF_MIME_TYPE}
-                        my="md"
-                    >
-                        <Group>
-                            <Dropzone.Accept>
-                                <IconUpload size={52} />
-                            </Dropzone.Accept>
-                            <Dropzone.Reject>
-                                <IconX size={52} />
-                            </Dropzone.Reject>
-                            <Dropzone.Idle>
-                                <IconPhoto size={52} />
-                            </Dropzone.Idle>
-                            <Box>
-                                <Text size="xl" inline>
-                                    Drag the purchase invoice here or click to select files
-                                </Text>
-                                <Text size="sm" c="dimmed" inline mt={7}>
-                                    Attach as many files as you like, each file should not exceed 5mb
-                                </Text>
-                            </Box>
-                        </Group>
-                    </Dropzone>
-
-                    <Group my="md">
-                        <Text>{uploadedFile?.name ?? "No file selected"}</Text>
-                        <Button
-                            leftSection={isUploading ? <Loader size={18} color="white" /> : <IconUpload size={18} />}
-                            onClick={uploadFile}>
-                            Upload File
-                        </Button>
-                        <Button
-                            leftSection={<IconX size={18} />}
-                            onClick={() => setUploadedFile(null)}>
-                            Clear
-                        </Button>
-                    </Group>
-                </Box>
-            } */}
+            <OrderTiles data={data ?? null} isLoading={isLoading} />
         </Container>
     )
 }
